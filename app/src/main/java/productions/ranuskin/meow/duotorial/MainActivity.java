@@ -89,21 +89,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void switchToMyDuo() {
-        tabBrowse.setVisibility(View.VISIBLE);
-        tabFeatured.setVisibility(View.VISIBLE);
-        tabMyDuoFragment.setVisibility(View.GONE);
+        tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
+        tabFeatured.setImageResource(R.drawable.ic_browse_duo_gray);
+        tabMyDuoFragment.setImageResource(R.drawable.ic_menu_camera);
     }
 
     private void switchToFeatured() {
-        tabBrowse.setVisibility(View.VISIBLE);
-        tabFeatured.setVisibility(View.GONE);
-        tabMyDuoFragment.setVisibility(View.VISIBLE);
+        tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
+        tabFeatured.setImageResource(R.drawable.ic_menu_camera);
+        tabMyDuoFragment.setImageResource(R.drawable.ic_browse_duo_gray);
     }
 
     private void switchToBrowse() {
-        tabBrowse.setVisibility(View.GONE);
-        tabFeatured.setVisibility(View.VISIBLE);
-        tabMyDuoFragment.setVisibility(View.VISIBLE);
+        tabBrowse.setImageResource(R.drawable.ic_menu_camera);
+        tabFeatured.setImageResource(R.drawable.ic_browse_duo_gray);
+        tabMyDuoFragment.setImageResource(R.drawable.ic_browse_duo_gray);
     }
 
     @Override
