@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.transition.Fade;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,10 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ViewSwitcher;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -47,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         tabBrowse= findViewById(R.id.ivBrowse);
-        tabFeatured= findViewById(R.id.ivFeatured);
+        tabFeatured= findViewById(R.id.ivPopular);
         tabMyDuoFragment= findViewById(R.id.ivMyDuo);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -93,22 +89,26 @@ public class MainActivity extends AppCompatActivity
 
     private void switchToMyDuo() {
         tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
-        tabFeatured.setImageResource(R.drawable.ic_browse_duo_gray);
-        tabMyDuoFragment.setImageResource(R.drawable.ic_menu_camera);
+        tabFeatured.setImageResource(R.drawable.ic_popular_duo_gray);
+        tabMyDuoFragment.setAlpha(0f);
+        tabMyDuoFragment.setImageResource(R.drawable.ic_my_duo_green);
+        tabMyDuoFragment.animate().alpha(1f).setDuration(500);
     }
 
     private void switchToFeatured() {
         tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
-        tabFeatured.setImageResource(R.drawable.ic_menu_camera);
-        tabMyDuoFragment.setImageResource(R.drawable.ic_browse_duo_gray);
+        tabFeatured.setAlpha(0f);
+        tabFeatured.setImageResource(R.drawable.ic_popular_duo_green);
+        tabFeatured.animate().alpha(1f).setDuration(500);
+        tabMyDuoFragment.setImageResource(R.drawable.ic_my_duo_gray);
     }
 
     private void switchToBrowse() {
         tabBrowse.setAlpha(0f);
-        tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
+        tabBrowse.setImageResource(R.drawable.ic_browse_duo_green);
         tabBrowse.animate().alpha(1f).setDuration(500);
-        tabFeatured.setImageResource(R.drawable.ic_browse_duo_gray);
-        tabMyDuoFragment.setImageResource(R.drawable.ic_browse_duo_gray);
+        tabFeatured.setImageResource(R.drawable.ic_popular_duo_gray);
+        tabMyDuoFragment.setImageResource(R.drawable.ic_my_duo_gray);
     }
 
     @Override
