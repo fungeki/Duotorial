@@ -104,7 +104,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void switchToBrowse() {
-        tabBrowse.setImageResource(R.drawable.ic_menu_camera);
+        tabBrowse.setAlpha(0f);
+        tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
+        tabBrowse.animate().alpha(1f).setDuration(500);
         tabFeatured.setImageResource(R.drawable.ic_browse_duo_gray);
         tabMyDuoFragment.setImageResource(R.drawable.ic_browse_duo_gray);
     }
