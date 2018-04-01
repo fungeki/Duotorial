@@ -1,11 +1,16 @@
 package productions.ranuskin.meow.duotorial;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -13,7 +18,7 @@ import java.util.ArrayList;
  * Created by Ran on 3/31/2018.
  */
 
-public class IntroAdapter {
+public class IntroAdapter extends BaseAdapter {
 
     private ArrayList<DuoIntro> data;
     private Context context;
@@ -21,6 +26,21 @@ public class IntroAdapter {
     public IntroAdapter(ArrayList<DuoIntro> data, Context context) {
         this.data = data;
         this.context = context;
+    }
+
+    @Override
+    public int getCount() {
+        return data.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return null;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
     }
 
     public View getView(int i, View view, ViewGroup parent) {
@@ -33,7 +53,7 @@ public class IntroAdapter {
 
 
         tvTitle.setText(item.getTitle());
-        ivIcon.setImageResource(item.getImageRes());
+        Picasso.with(context).load(item.getImageURL()).into(ivIcon);
         tvIntro.setText(item.getIntro());
 
         return v;

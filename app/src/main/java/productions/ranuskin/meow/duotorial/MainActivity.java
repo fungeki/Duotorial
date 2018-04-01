@@ -1,5 +1,6 @@
 package productions.ranuskin.meow.duotorial;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,7 +15,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -23,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView tabFeatured;
     private ImageView tabMyDuoFragment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    public ListView lvfeatured;
 
     private ViewPager mViewPager;
     @Override
@@ -53,6 +67,7 @@ public class MainActivity extends AppCompatActivity
         viewPagerChangeListener();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mViewPager.setCurrentItem(1);
+        new FeaturedTask().execute();
     }
 
     private void viewPagerChangeListener() {
@@ -184,7 +199,56 @@ public class MainActivity extends AppCompatActivity
         mViewPager.setCurrentItem(2);
     }
 
+    class FeaturedTask extends AsyncTask<Void,Void,String> {
 
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                return HttpIO.getJson("https://www.wikihow.com/api.php?action=app&subcmd=featured&format=json&num=50");
+            } catch (IOException e) {
+                Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            try {
+                JSONObject root = new JSONObject(s).getJSONObject("app");
+                JSONArray articles = root.getJSONArray("articles");
+
+
+                ArrayList<DuoIntro> featured = new ArrayList<>();
+
+                for (int i = 0; i <50 ; i++) {
+
+                    JSONObject introObject = articles.getJSONObject(i);
+                    String title = introObject.getString("fulltitle");
+                    String description = introObject.getString("abstract");
+                    String imageURL = introObject.getJSONObject("image").getString("url");
+                    featured.add(new DuoIntro(title,description,imageURL));
+
+                }
+
+
+                ListView lvFeatured = findViewById(R.id.lvFeatured);
+                IntroAdapter adapter = new IntroAdapter(featured,MainActivity.this);
+                lvFeatured.setAdapter(adapter);
+                /*//*for (FeaturedTitles title : titles) {
+                    fetch.add(title.getTitle());
+                }*/
+
+
+
+                /*for/* (FeaturedTitles title : titles) {
+                Toast.makeText(MainActivity.this, titles.toString(), Toast.LENGTH_SHORT).show();
+*/
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 

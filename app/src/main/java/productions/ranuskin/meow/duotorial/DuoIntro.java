@@ -2,6 +2,8 @@ package productions.ranuskin.meow.duotorial;
 
 import android.support.annotation.DrawableRes;
 
+import java.net.URL;
+
 /**
  * Created by Ran on 3/31/2018.
  */
@@ -9,14 +11,12 @@ import android.support.annotation.DrawableRes;
 public class DuoIntro {
     String title;
     String intro;
+    String imageURL;
 
-    @DrawableRes
-    int imageRes;
-
-    public DuoIntro(String title, String intro, int imageRes) {
+    public DuoIntro(String title, String intro, String imageURL) {
         this.title = title;
         this.intro = intro;
-        this.imageRes = imageRes;
+        this.imageURL = imageURL;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class DuoIntro {
         return "DuoIntro{" +
                 "title='" + title + '\'' +
                 ", intro='" + intro + '\'' +
-                ", imageRes=" + imageRes +
+                ", imageURL=" + imageURL +
                 '}';
     }
 
@@ -44,11 +44,11 @@ public class DuoIntro {
         this.intro = intro;
     }
 
-    public int getImageRes() {
-        return imageRes;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setImageRes(int imageRes) {
-        this.imageRes = imageRes;
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 }
