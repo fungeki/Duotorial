@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 
 /**
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
  */
 public class FeaturedFragment extends Fragment {
 
+    private ListView lvFeatured;
 
     public FeaturedFragment() {
         // Required empty public constructor
@@ -30,6 +32,8 @@ public class FeaturedFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        lvFeatured=view.findViewById(R.id.lvFeatured);
+
 
     }
 }
