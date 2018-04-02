@@ -1,8 +1,11 @@
 package productions.ranuskin.meow.duotorial;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,7 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +43,7 @@ public class DuotorialActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Intent intent = getIntent();
@@ -123,7 +130,6 @@ public class DuotorialActivity extends AppCompatActivity
                     tvTitle =findViewById(R.id.tvTitle);
                     tvDescription =findViewById(R.id.tvDescription);
                     ivStageImage=findViewById(R.id.ivStepImage);
-
                     tvTitle.animate().alpha(1f).setDuration(500);
                     JSONObject root = new JSONObject(s).getJSONObject("app");
                     step=0;
@@ -167,5 +173,34 @@ public class DuotorialActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, titles.toString(), Toast.LENGTH_SHORT).show();
 */
         }
+        /*private void openDialog() {
+            final Dialog dialog = new Dialog(DuotorialActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_list_duotorial, null);
+            ListView lvSteps = dialogView.findViewById(R.id.lvDialog);
+            lvSteps.setAdapter(adapter);
+            FloatingActionButton btnClose = dialogView.findViewById(R.id.fabExit);
+            btnClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            lvSteps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    current = i;
+                    updateStage();
+                    dialog.dismiss();
+                }
+            });
+            dialog.setContentView(dialogView);
+            dialog.show();
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    updateStage();
+                }
+            });
+        }*/
     }
 }
