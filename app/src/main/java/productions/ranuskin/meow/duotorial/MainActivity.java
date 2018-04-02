@@ -2,6 +2,7 @@ package productions.ranuskin.meow.duotorial;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.input.InputManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,14 +23,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -37,13 +39,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     private ImageView tabBrowse;
     private ImageView tabFeatured;
     private ImageView tabMyDuoFragment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    public ListView lvfeatured;
 
     private ViewPager mViewPager;
     @Override
@@ -63,9 +64,9 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        tabBrowse= findViewById(R.id.ivBrowse);
+        /*tabBrowse= findViewById(R.id.ivBrowse);
         tabFeatured= findViewById(R.id.ivPopular);
-        tabMyDuoFragment= findViewById(R.id.ivMyDuo);
+        tabMyDuoFragment= findViewById(R.id.ivMyDuo);*/
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -73,8 +74,13 @@ public class MainActivity extends AppCompatActivity
         mViewPager.setAdapter(mSectionsPagerAdapter);
         viewPagerChangeListener();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        mViewPager.setCurrentItem(1);
+
         new FeaturedTask().execute("&subcmd=featured");
+        tabBrowse=findViewById(R.id.ivBrowse);
+        tabFeatured=findViewById(R.id.ivPopular);
+        tabMyDuoFragment = findViewById(R.id.ivMyDuo);
+        mViewPager.setCurrentItem(1);
+
     }
 
     private void viewPagerChangeListener() {
@@ -165,6 +171,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
         return true;
     }
 
@@ -208,19 +215,38 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void toBrowse(View view) {
-            switchToBrowse();
+    /*public void toBrowse(View view) {
+            tabsFragment.switchToBrowse();
             mViewPager.setCurrentItem(0);
     }
 
     public void toFeatured(View view) {
-        switchToFeatured();
+        tabsFragment.switchToFeatured();
         mViewPager.setCurrentItem(1);
     }
 
     public void toMyDuo(View view) {
-        switchToMyDuo();
+        tabsFragment.switchToMyDuo();
         mViewPager.setCurrentItem(2);
+    }
+*/
+
+    public void switchTabs(View view) {
+        switch (view.getId()){
+            case
+                R.id.ivBrowse:
+                switchToBrowse();
+                mViewPager.setCurrentItem(0);
+                break;
+            case R.id.ivPopular:
+                switchToFeatured();
+                mViewPager.setCurrentItem(1);
+                break;
+            case R.id.ivMyDuo:
+                switchToMyDuo();
+                mViewPager.setCurrentItem(2);
+                break;
+        }
     }
 
     class FeaturedTask extends AsyncTask<String,Void,String> {
@@ -241,7 +267,7 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(String s) {
             try {
                 JSONObject root = new JSONObject(s).getJSONObject("app");
-                JSONArray articles = root.getJSONArray("articles");
+                final JSONArray articles = root.getJSONArray("articles");
 
 
                 ArrayList<DuoIntro> featured = new ArrayList<>();
@@ -257,9 +283,45 @@ public class MainActivity extends AppCompatActivity
                 }
 
 
-                ListView lvFeatured = findViewById(R.id.lvFeatured);
+                final ListView lvFeatured = findViewById(R.id.lvFeatured);
                 IntroAdapter adapter = new IntroAdapter(featured,MainActivity.this);
                 lvFeatured.setAdapter(adapter);
+                lvFeatured.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        try {
+                            JSONObject titleFetch = articles.getJSONObject(position);
+                            String getTitle = titleFetch.getString("title");
+                            Intent intent = new Intent(MainActivity.this,DuotorialActivity.class);
+                            intent.putExtra("TITLE",getTitle);
+                            startActivity(intent);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                /*lvFeatured.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        try {
+                            JSONObject titleFetch = articles.getJSONObject(position);
+                            String getTitle = titleFetch.getString("title");
+                            Intent intent = new Intent(MainActivity.this,DuotorialActivity.class);
+                            intent.putExtra("TITLE",getTitle);
+                            startActivity(intent);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }*/
+
+                    /*@Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });*/
                 /*//*for (FeaturedTitles title : titles) {
                     fetch.add(title.getTitle());
                 }*/
