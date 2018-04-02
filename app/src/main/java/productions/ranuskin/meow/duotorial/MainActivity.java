@@ -1,11 +1,17 @@
 package productions.ranuskin.meow.duotorial;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.hardware.input.InputManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -67,7 +74,7 @@ public class MainActivity extends AppCompatActivity
         viewPagerChangeListener();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mViewPager.setCurrentItem(1);
-        new FeaturedTask().execute();
+        new FeaturedTask().execute("&subcmd=featured");
     }
 
     private void viewPagerChangeListener() {
@@ -141,6 +148,23 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                new FeaturedTask().execute("&subcmd=search&q="+query);
+                InputMethodManager inputManager = (InputMethodManager) getApplicationContext().
+                        getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -152,7 +176,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
             return true;
         }
 
@@ -199,12 +223,13 @@ public class MainActivity extends AppCompatActivity
         mViewPager.setCurrentItem(2);
     }
 
-    class FeaturedTask extends AsyncTask<Void,Void,String> {
+    class FeaturedTask extends AsyncTask<String,Void,String> {
+
 
         @Override
-        protected String doInBackground(Void... voids) {
+        protected String doInBackground(String... strings) {
             try {
-                return HttpIO.getJson("https://www.wikihow.com/api.php?action=app&subcmd=featured&format=json&num=50");
+                return HttpIO.getJson("https://www.wikihow.com/api.php?action=app&format=json&num=50"+strings[0]);
             } catch (IOException e) {
                 Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();

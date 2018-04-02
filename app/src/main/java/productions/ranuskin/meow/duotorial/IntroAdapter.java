@@ -1,13 +1,11 @@
 package productions.ranuskin.meow.duotorial;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -46,7 +44,7 @@ public class IntroAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup parent) {
         DuoIntro item = data.get(i);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View v = inflater.inflate(R.layout.popular_list_row,parent,false);
+        View v = inflater.inflate(R.layout.intro_list_row,parent,false);
         ImageView ivIcon = v.findViewById(R.id.ivIcon);
         TextView tvTitle = v.findViewById(R.id.tvRowTitle);
         TextView tvIntro = v.findViewById(R.id.tvIntro);
