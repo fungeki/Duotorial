@@ -3,15 +3,21 @@ package productions.ranuskin.meow.duotorial;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +35,7 @@ import java.io.IOException;
 
 public class DuotorialActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,11 +114,15 @@ public class DuotorialActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    class DuotorialTask extends AsyncTask<String,Void,String> {
 
+    class DuotorialTask extends AsyncTask<String,Void,String> {
+       private SectionsPagerAdapterDuotorial mSectionsPagerAdapter;
+       private ViewPager mViewPager;
        private ImageView ivStageImage;
        private TextView tvTitle;
        private TextView tvDescription;
+       private TextView tvBackground;
+       private int halfScreen;
         private int step;
         @Override
         protected String doInBackground(String... strings) {
@@ -126,16 +137,20 @@ public class DuotorialActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(String s) {
+
+            mSectionsPagerAdapter = new SectionsPagerAdapterDuotorial(getSupportFragmentManager());
+            mViewPager = (ViewPager) findViewById(R.id.duotorial_container);
+            mViewPager.setAdapter(mSectionsPagerAdapter);
+
                 try {
-                    tvTitle =findViewById(R.id.tvTitle);
-                    tvDescription =findViewById(R.id.tvDescription);
-                    ivStageImage=findViewById(R.id.ivStepImage);
+                    initialize();
                     tvTitle.animate().alpha(1f).setDuration(500);
                     JSONObject root = new JSONObject(s).getJSONObject("app");
                     step=0;
                     JSONObject introImage = root.getJSONObject("image");
                     String introImageURL = introImage.getString("url");
-                    String title = root.getString("fulltitle");
+                    String title = root.getString("title");
+                    title = "How to " + title;
                     String description = root.getString("abstract");
 
                     tvTitle.setText(title);
@@ -149,6 +164,23 @@ public class DuotorialActivity extends AppCompatActivity
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
+                mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+
+
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
                 /*final JSONArray articles = root.getJSONArray("articles");
 
 
@@ -172,6 +204,48 @@ public class DuotorialActivity extends AppCompatActivity
                 /*for/* (FeaturedTitles title : titles) {
                 Toast.makeText(MainActivity.this, titles.toString(), Toast.LENGTH_SHORT).show();
 */
+        }
+
+        private void initialize() {
+
+            tvTitle =findViewById(R.id.tvTitle);
+            tvDescription =findViewById(R.id.tvDescription);
+            ivStageImage=findViewById(R.id.ivStepImage);
+            tvBackground = findViewById(R.id.tvBackground);
+            Configuration configuration = DuotorialActivity.this.getResources().getConfiguration();
+            halfScreen = configuration.screenWidthDp/2;
+
+
+        }
+
+        public class SectionsPagerAdapterDuotorial extends FragmentPagerAdapter {
+
+
+            public SectionsPagerAdapterDuotorial(FragmentManager fm) {
+                super(fm);
+
+            }
+            @Override
+            public Fragment getItem(int position) {
+                // getItem is called to instantiate the fragment for the given page.
+                // Return a PlaceholderFragment (defined as a static inner class below).
+
+                // comm.response(position);
+                switch (position){
+                    case 0:
+                        return new StepsFragment();
+                    case 1:
+                        return new ClassroomFragment();
+
+                }
+                return null;
+            }
+            @Override
+            public int getCount() {
+                // Show 3 total pages.
+                return 2;
+            }
+
         }
         /*private void openDialog() {
             final Dialog dialog = new Dialog(DuotorialActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);

@@ -6,77 +6,70 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="productions.ranuskin.meow.duotorial.DuotorialActivity"
+    tools:layout_editor_absoluteY="81dp"
     tools:showIn="@layout/app_bar_duotorial">
 
 
     <TextView
-        android:id="@+id/tvTitle"
+        android:id="@+id/tvBackground"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:alpha="0"
-        android:padding="8dp"
-        android:text="Meow"
-        android:textColor="@color/colorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:visibility="visible"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimary"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="@+id/ivTabSteps"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/ivStepImage"
+        android:id="@+id/ivTabSteps"
         android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:alpha="0"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+        android:layout_height="0dp"
 
-    <TextView
-        android:id="@+id/tvDescription"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:alpha="0"
-        android:padding="4dp"
-        android:text="Meow"
-        android:textSize="16sp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/glhContainer"
+        app:layout_constraintEnd_toStartOf="@+id/glvMid"
+        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivStepImage" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabNext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_menu_send" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_stesps" />
 
     <ImageView
-        android:id="@+id/ivStepsList"
-        android:layout_width="72dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="16dp"
+        android:id="@+id/ivTabClassroom"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/glhContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.714"
+        app:layout_constraintStart_toStartOf="@+id/glvMid"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_classroom" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/duotorial_container"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_dot_lines_list" />
+        app:layout_constraintTop_toTopOf="@+id/glhContainer" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/glhContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.13" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/glvMid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
 </android.support.constraint.ConstraintLayout>

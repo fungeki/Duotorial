@@ -275,7 +275,8 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0; i <50 ; i++) {
 
                     JSONObject introObject = articles.getJSONObject(i);
-                    String title = introObject.getString("fulltitle");
+                    String title = introObject.getString("title");
+                    title= "How to " + title;
                     String description = introObject.getString("abstract");
                     String imageURL = introObject.getJSONObject("image").getString("url");
                     featured.add(new DuoIntro(title,description,imageURL));

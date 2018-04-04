@@ -6,7 +6,8 @@ import java.util.ArrayList;
  * Created by Ran on 4/2/2018.
  */
 
-public class CategoryDataLibrary {
+public class
+CategoryDataLibrary {
 
     public static ArrayList<DuoCategory> getData(){
         ArrayList<DuoCategory> data = new ArrayList<>();
