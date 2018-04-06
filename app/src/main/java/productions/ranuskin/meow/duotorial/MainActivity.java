@@ -1,18 +1,14 @@
 package productions.ranuskin.meow.duotorial;
 
-import android.app.SearchManager;
-import android.content.Context;
+import java.util.concurrent.ThreadLocalRandom;
 import android.content.Intent;
-import android.hardware.input.InputManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
-import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,19 +20,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
@@ -76,6 +69,7 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         new FeaturedTask().execute("&subcmd=featured");
+
         tabBrowse=findViewById(R.id.ivBrowse);
         tabFeatured=findViewById(R.id.ivPopular);
         tabMyDuoFragment = findViewById(R.id.ivMyDuo);
@@ -196,8 +190,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_random) {
             // Handle the camera action
+
+            new RandomTask().execute();
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -248,6 +244,43 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
+    class RandomTask extends AsyncTask<Void ,Void,String> {
+
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                return HttpIO.getJson("https://www.wikihow.com/api.php?action=app&format=json&num=100&subcmd=featured");
+            } catch (IOException e) {
+                Toast.makeText(MainActivity.this, "error! no connection", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            try {
+                JSONArray root = new JSONObject(s).getJSONObject("app").getJSONArray("articles");
+                int randomNum = ThreadLocalRandom.current().nextInt(0, 100);
+                JSONObject selectedRandom = root.getJSONObject(randomNum);
+                Intent intent = new Intent(MainActivity.this,DuotorialActivity.class);
+                String title = selectedRandom.getString("title");
+                String getDescription = selectedRandom.getString("abstract");
+                String imageURL = selectedRandom.getJSONObject("image").getString("url");
+                intent.putExtra("TITLE",title);
+                intent.putExtra("DESCRIPTION", getDescription);
+                intent.putExtra("IMAGE", imageURL);
+                startActivity(intent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 
     class FeaturedTask extends AsyncTask<String,Void,String> {
 
@@ -257,7 +290,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 return HttpIO.getJson("https://www.wikihow.com/api.php?action=app&format=json&num=50"+strings[0]);
             } catch (IOException e) {
-                Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "error! no connection", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
             return null;
@@ -278,6 +311,7 @@ public class MainActivity extends AppCompatActivity
                     String title = introObject.getString("title");
                     title= "How to " + title;
                     String description = introObject.getString("abstract");
+                    description = Jsoup.parse(description).text();
                     String imageURL = introObject.getJSONObject("image").getString("url");
                     featured.add(new DuoIntro(title,description,imageURL));
 
@@ -293,8 +327,13 @@ public class MainActivity extends AppCompatActivity
                         try {
                             JSONObject titleFetch = articles.getJSONObject(position);
                             String getTitle = titleFetch.getString("title");
+                            String getDescription = titleFetch.getString("abstract");
+                            getDescription = Jsoup.parse(getDescription).text();
+                            String getImage = titleFetch.getJSONObject("image").getString("url");
                             Intent intent = new Intent(MainActivity.this,DuotorialActivity.class);
                             intent.putExtra("TITLE",getTitle);
+                            intent.putExtra("DESCRIPTION", getDescription);
+                            intent.putExtra("IMAGE", getImage);
                             startActivity(intent);
 
                         } catch (Exception e) {

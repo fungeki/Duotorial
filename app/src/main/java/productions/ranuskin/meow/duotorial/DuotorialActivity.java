@@ -3,7 +3,6 @@ package productions.ranuskin.meow.duotorial;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,21 +16,26 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class DuotorialActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,8 +59,9 @@ public class DuotorialActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         Intent intent = getIntent();
         String title = intent.getStringExtra("TITLE");
-        String modifiedTitle= title.replace("_"," ");
-        new DuotorialTask().execute(modifiedTitle);
+        String introImage = intent.getStringExtra("IMAGE");
+        String description = intent.getStringExtra("DESCRIPTION");
+        new DuotorialTask().execute(title,introImage,description);
 
     }
 
@@ -96,7 +101,7 @@ public class DuotorialActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_random) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 
@@ -115,19 +120,34 @@ public class DuotorialActivity extends AppCompatActivity
         return true;
     }
 
-    class DuotorialTask extends AsyncTask<String,Void,String> {
+    class DuotorialTask extends AsyncTask<String,Void,Document> {
        private SectionsPagerAdapterDuotorial mSectionsPagerAdapter;
        private ViewPager mViewPager;
        private ImageView ivStageImage;
        private TextView tvTitle;
        private TextView tvDescription;
        private TextView tvBackground;
-       private int halfScreen;
-        private int step;
+       private int currentStep;
+       private ArrayList<DuotorialStep> forIntro;
+       private ArrayList<DuotorialDialogPreview> dialogData;
+       private DuotorialStep introToDuotorial;
+       private ArrayList<DuotorialStep> stages;
+       private ImageView ivStepsList;
+       private String introTitle;
+       private String introDescription;
+       private String introImageURL;
+       private ProgressBar pbLoad;
+       private FloatingActionButton fabNext;
+
+
         @Override
-        protected String doInBackground(String... strings) {
+        protected Document doInBackground(String... strings) {
+            introTitle = strings[0];
+            introImageURL=strings[1];
+            introDescription=strings[2];
             try {
-                return HttpIO.getJson("https://www.wikihow.com/api.php?action=app&format=json&num=50&subcmd=article&name="+strings[0]);
+
+                return Jsoup.connect("https://www.wikihow.com/"+ introTitle).timeout(6000).get();
             } catch (IOException e) {
                 Toast.makeText(DuotorialActivity.this, "error", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
@@ -136,7 +156,7 @@ public class DuotorialActivity extends AppCompatActivity
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(Document document) {
 
             mSectionsPagerAdapter = new SectionsPagerAdapterDuotorial(getSupportFragmentManager());
             mViewPager = (ViewPager) findViewById(R.id.duotorial_container);
@@ -144,21 +164,79 @@ public class DuotorialActivity extends AppCompatActivity
 
                 try {
                     initialize();
-                    tvTitle.animate().alpha(1f).setDuration(500);
-                    JSONObject root = new JSONObject(s).getJSONObject("app");
-                    step=0;
-                    JSONObject introImage = root.getJSONObject("image");
-                    String introImageURL = introImage.getString("url");
-                    String title = root.getString("title");
-                    title = "How to " + title;
-                    String description = root.getString("abstract");
 
-                    tvTitle.setText(title);
-                    tvDescription.setText(description);
-                    Picasso.with(DuotorialActivity.this).load(introImageURL).into(ivStageImage);
-                    tvTitle.animate().alpha(1f).setDuration(500);
-                    tvDescription.animate().alpha(1f).setDuration(500);
-                    ivStageImage.animate().alpha(1f).setDuration(500);
+
+
+
+                    Elements body = document.select("div#bodycontents");
+                    int stepNumber = 0;
+                    ArrayList<String> imgURL = new ArrayList<>();
+                    for (Element element : body.select(".section_text")) {
+
+
+                        for (Element img : body.select(".content-spacer img")) {
+                            if (img.attr("data-src").length()>10){
+                                imgURL.add(img.attr("data-src"));
+
+                            }
+                        }
+
+                        String boldText = body.select(".step b").get(stepNumber).text();
+
+                        /*String stageHeadline = body.select(".mw-headline").get(stepNumber).text();*/
+
+
+                        stepNumber++;
+
+
+                        String stageDescription = body.select(".step").get(stepNumber).text();
+                        dialogData.add(new DuotorialDialogPreview(boldText,imgURL.get(stepNumber)));
+                        stages.add(new DuotorialStep(stepNumber,introTitle,stageDescription,imgURL.get(stepNumber)));
+
+
+
+
+                            }
+
+                    pbLoad.setVisibility(View.GONE);
+
+                    update();
+                    next();
+                    ivStepsList.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final Dialog dialog = new Dialog(DuotorialActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                            View dialogView = getLayoutInflater().inflate(R.layout.dialog_list_duotorial, null);
+                            ListView lvSteps = dialogView.findViewById(R.id.lvDialog);
+                            DialogAdapter adapter = new DialogAdapter(dialogData,DuotorialActivity.this);
+                            lvSteps.setAdapter(adapter);
+                            FloatingActionButton btnClose = dialogView.findViewById(R.id.fabExit);
+                            btnClose.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            lvSteps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    currentStep = i;
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.setContentView(dialogView);
+                            dialog.show();
+                            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialogInterface) {
+                                    update();
+                                }
+                            });
+                        }
+                    });
+
+
+
 
 
                 } catch (Exception e1) {
@@ -181,40 +259,57 @@ public class DuotorialActivity extends AppCompatActivity
 
                     }
                 });
-                /*final JSONArray articles = root.getJSONArray("articles");
 
+        }
 
-                ArrayList<DuoIntro> featured = new ArrayList<>();
+        private void next() {
+            fabNext.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                for (int i = 0; i <50 ; i++) {
+                    if (currentStep<stages.size()-1){
+                        currentStep++;
+                        update();
+                    }else {
+                        Toast.makeText(DuotorialActivity.this, "last stage!", Toast.LENGTH_SHORT).show();
+                    }
 
-                    JSONObject introObject = articles.getJSONObject(i);
-                    String title = introObject.getString("fulltitle");
-                    String description = introObject.getString("abstract");
-                    String imageURL = introObject.getJSONObject("image").getString("url");
-                    featured.add(new DuoIntro(title,description,imageURL));
+                }
+            });
+        }
 
-                }/*
-                /*//*for (FeaturedTitles title : titles) {
-                    fetch.add(title.getTitle());
-                }*/
-
-
-
-                /*for/* (FeaturedTitles title : titles) {
-                Toast.makeText(MainActivity.this, titles.toString(), Toast.LENGTH_SHORT).show();
-*/
+        private void update() {
+            tvTitle.setText(stages.get(currentStep).getTitle());
+            tvDescription.setText(stages.get(currentStep).getDescription());
+            Picasso.with(DuotorialActivity.this).load(stages.get(currentStep).getImageURL()).into(ivStageImage);
+            pbLoad.setVisibility(View.GONE);
+            tvTitle.animate().alpha(1f).setDuration(500);
+            tvDescription.animate().alpha(1f).setDuration(500);
+            ivStageImage.animate().alpha(1f).setDuration(500);
         }
 
         private void initialize() {
 
+            currentStep=0;
             tvTitle =findViewById(R.id.tvTitle);
             tvDescription =findViewById(R.id.tvDescription);
             ivStageImage=findViewById(R.id.ivStepImage);
             tvBackground = findViewById(R.id.tvBackground);
-            Configuration configuration = DuotorialActivity.this.getResources().getConfiguration();
-            halfScreen = configuration.screenWidthDp/2;
-
+            introToDuotorial = new DuotorialStep(0,introTitle,introDescription,introImageURL);
+            forIntro = new ArrayList<>();
+            pbLoad=findViewById(R.id.pbLoad);
+            fabNext=findViewById(R.id.fabNext);
+            stages = new ArrayList<>();
+            stages.add(introToDuotorial);
+            dialogData=new ArrayList<>();
+            tvDescription.setMovementMethod(new ScrollingMovementMethod());
+            ivStepsList = findViewById(R.id.ivStepsList);
+            if (introDescription.length()>100){
+            dialogData.add(new DuotorialDialogPreview(introDescription.substring(0,100)+"...",introImageURL));
+            } else{
+                dialogData.add(new DuotorialDialogPreview(introDescription ,introImageURL));
+            }
+            /*stages.add(new DuotorialStage(forIntro,introTitle));*/
 
         }
 
@@ -247,7 +342,34 @@ public class DuotorialActivity extends AppCompatActivity
             }
 
         }
-        /*private void openDialog() {
+
+    }
+}
+//unused code for debugging
+/*final JSONArray articles = root.getJSONArray("articles");
+
+
+                ArrayList<DuoIntro> featured = new ArrayList<>();
+
+                for (int i = 0; i <50 ; i++) {
+
+                    JSONObject introObject = articles.getJSONObject(i);
+                    String title = introObject.getString("fulltitle");
+                    String description = introObject.getString("abstract");
+                    String imageURL = introObject.getJSONObject("image").getString("url");
+                    featured.add(new DuoIntro(title,description,imageURL));
+
+                }/*
+                /*//*for (FeaturedTitles title : titles) {
+                    fetch.add(title.getTitle());
+                }*/
+
+
+
+                /*for/* (FeaturedTitles title : titles) {
+                Toast.makeText(MainActivity.this, titles.toString(), Toast.LENGTH_SHORT).show();
+*/
+                /*private void openDialog() {
             final Dialog dialog = new Dialog(DuotorialActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_list_duotorial, null);
             ListView lvSteps = dialogView.findViewById(R.id.lvDialog);
@@ -276,5 +398,25 @@ public class DuotorialActivity extends AppCompatActivity
                 }
             });
         }*/
-    }
-}
+                /*String imageURL = body.select(".whcdn").get(stepNumber).attr("data-src");*/
+                                /*for (int i = 0; i < 2; i++) {
+                                    if (body.select("img").get(stepNumber+i).attr("data-src").length()>10){
+                                        imageURL=body.select("img").get(stepNumber+i).attr("data-src");
+                                    }
+                                }*/
+                                /*for (Element img : body.select("img")) {
+                                    if (img.attr("data-src").length()>10){
+                                        imageURL=img.attr("data-src");
+                                    }
+
+                                }*/
+                                /*                    JSONObject root = new JSONObject(s).getJSONObject("app");
+                    JSONObject introImage = root.getJSONObject("image");
+                    String introImageURL = introImage.getString("url");
+                    String title = root.getString("title");
+                    title = "How to " + title;
+                    String description = root.getString("abstract");*/
+/*
+                    tvTitle.setText(title);
+                    tvDescription.setText(description);
+                    Picasso.with(DuotorialActivity.this).load(introImageURL).into(ivStageImage);*/

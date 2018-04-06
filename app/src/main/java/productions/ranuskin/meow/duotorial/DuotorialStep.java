@@ -6,13 +6,13 @@ package productions.ranuskin.meow.duotorial;
 
 public class DuotorialStep {
     int number;
-    String summary;
+    String title;
     String description;
     String imageURL;
 
-    public DuotorialStep(int number, String summary, String description, String imageURL) {
+    public DuotorialStep(int number, String title, String description, String imageURL) {
         this.number = number;
-        this.summary = summary;
+        this.title = title;
         this.description = description;
         this.imageURL = imageURL;
     }
@@ -21,7 +21,7 @@ public class DuotorialStep {
     public String toString() {
         return "DuotorialStep{" +
                 "number=" + number +
-                ", summary='" + summary + '\'' +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", imageURL='" + imageURL + '\'' +
                 '}';
@@ -35,12 +35,12 @@ public class DuotorialStep {
         this.number = number;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getTitle() {
+        return title;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {

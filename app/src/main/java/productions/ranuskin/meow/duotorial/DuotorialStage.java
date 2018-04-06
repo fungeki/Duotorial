@@ -7,17 +7,12 @@ import java.util.ArrayList;
  */
 
 public class DuotorialStage {
-    ArrayList<DuotorialStep> steps;
+    private ArrayList<DuotorialStep> steps;
+    private String title;
 
-    public DuotorialStage(ArrayList<DuotorialStep> steps) {
+    public DuotorialStage(ArrayList<DuotorialStep> steps, String title) {
         this.steps = steps;
-    }
-
-    @Override
-    public String toString() {
-        return "DuotorialStage{" +
-                "steps=" + steps +
-                '}';
+        this.title = title;
     }
 
     public ArrayList<DuotorialStep> getSteps() {
@@ -26,5 +21,21 @@ public class DuotorialStage {
 
     public void setSteps(ArrayList<DuotorialStep> steps) {
         this.steps = steps;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Override
+    public String toString() {
+        return "DuotorialStage{" +
+                "steps=" + steps +
+                ", title='" + title + '\'' +
+                '}';
     }
 }
