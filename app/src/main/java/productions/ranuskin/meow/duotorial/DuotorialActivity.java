@@ -134,7 +134,7 @@ public class DuotorialActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    class DuotorialTask extends AsyncTask<String,Void,Document> {
+    private class DuotorialTask extends AsyncTask<String,Void,Document> {
        private SectionsPagerAdapterDuotorial mSectionsPagerAdapter;
        private ViewPager mViewPager;
        private ImageView ivStageImage;

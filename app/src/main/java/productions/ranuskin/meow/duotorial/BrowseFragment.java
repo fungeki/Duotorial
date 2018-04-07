@@ -5,11 +5,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -26,10 +28,10 @@ public class BrowseFragment extends Fragment {
 
     private ListView lvCategories;
 
+
     public BrowseFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,18 +43,22 @@ public class BrowseFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         lvCategories = view.findViewById(R.id.lvCategories);
         lvCategories.setDivider(null);
+
+
         BrowseAdapter adapter = new BrowseAdapter(CategoryDataLibrary.getData(), getContext());
         lvCategories.setAdapter(adapter);
-        lvCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        lvCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                lvCategories.setVisibility(View.GONE);
+                TextView tvHeader = view.findViewById(R.id.tvCategoryTitle);
+                TextView tvHeader2 = view.findViewById(R.id.tvCategoryTitle2);
+                String target = tvHeader.getText().toString() + " "+ tvHeader2.getText().toString();
+                CategoryDisplayFragment fragment = CategoryDisplayFragment.newInstance(target);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.category_container,fragment).commit();
             }
         });
     }

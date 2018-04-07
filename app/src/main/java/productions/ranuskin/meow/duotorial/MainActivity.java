@@ -172,7 +172,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
         return true;
     }
 
@@ -223,21 +222,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    /*public void toBrowse(View view) {
-            tabsFragment.switchToBrowse();
-            mViewPager.setCurrentItem(0);
-    }
 
-    public void toFeatured(View view) {
-        tabsFragment.switchToFeatured();
-        mViewPager.setCurrentItem(1);
-    }
-
-    public void toMyDuo(View view) {
-        tabsFragment.switchToMyDuo();
-        mViewPager.setCurrentItem(2);
-    }
-*/
 
     public void switchTabs(View view) {
         switch (view.getId()){
@@ -259,7 +244,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    class FeaturedTask extends AsyncTask<String,Void,String> {
+    private class FeaturedTask extends AsyncTask<String,Void,String> {
 
 
         @Override
@@ -318,36 +303,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 });
-                /*lvFeatured.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        try {
-                            JSONObject titleFetch = articles.getJSONObject(position);
-                            String getTitle = titleFetch.getString("title");
-                            Intent intent = new Intent(MainActivity.this,DuotorialActivity.class);
-                            intent.putExtra("TITLE",getTitle);
-                            startActivity(intent);
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }*/
-
-                    /*@Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });*/
-                /*//*for (FeaturedTitles title : titles) {
-                    fetch.add(title.getTitle());
-                }*/
-
-
-
-                /*for/* (FeaturedTitles title : titles) {
-                Toast.makeText(MainActivity.this, titles.toString(), Toast.LENGTH_SHORT).show();
-*/
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -387,3 +343,50 @@ public class MainActivity extends AppCompatActivity
 
 
 }
+//unused code for future debugging
+/*lvFeatured.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        try {
+                            JSONObject titleFetch = articles.getJSONObject(position);
+                            String getTitle = titleFetch.getString("title");
+                            Intent intent = new Intent(MainActivity.this,DuotorialActivity.class);
+                            intent.putExtra("TITLE",getTitle);
+                            startActivity(intent);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }*/
+
+                    /*@Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });*/
+                /*//*for (FeaturedTitles title : titles) {
+                    fetch.add(title.getTitle());
+                }*/
+
+
+
+                /*for/* (FeaturedTitles title : titles) {
+                Toast.makeText(MainActivity.this, titles.toString(), Toast.LENGTH_SHORT).show();
+*/
+                //from ver0.2 tab switch
+                /*public void toBrowse(View view) {
+            tabsFragment.switchToBrowse();
+            mViewPager.setCurrentItem(0);
+    }
+
+    public void toFeatured(View view) {
+        tabsFragment.switchToFeatured();
+        mViewPager.setCurrentItem(1);
+    }
+
+    public void toMyDuo(View view) {
+        tabsFragment.switchToMyDuo();
+        mViewPager.setCurrentItem(2);
+    }
+*/
