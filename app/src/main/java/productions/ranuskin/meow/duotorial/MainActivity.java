@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView tabFeatured;
     private ImageView tabMyDuoFragment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    private Integer currentFragment;
 
     private ViewPager mViewPager;
     @Override
@@ -49,7 +50,8 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void initialize() {
+    private void
+    initialize() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -69,11 +71,16 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         new FeaturedTask().execute("&subcmd=featured");
+        currentFragment=1;
 
         tabBrowse=findViewById(R.id.ivBrowse);
         tabFeatured=findViewById(R.id.ivPopular);
         tabMyDuoFragment = findViewById(R.id.ivMyDuo);
-        mViewPager.setCurrentItem(1);
+        Intent intent = getIntent();
+        if (intent.getStringExtra("Fragment_Num")!=null) {
+            currentFragment = Integer.parseInt(intent.getStringExtra("Fragment_Num"));
+        }
+        mViewPager.setCurrentItem(currentFragment);
 
     }
 
@@ -190,20 +197,25 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_random) {
-            // Handle the camera action
+        switch (id) {
+            case R.id.nav_home:
+                mViewPager.setCurrentItem(1);
+                break;
+            case R.id.nav_random:
+                new RandomTask(this).execute();
+                break;
+           /* case R.id.nav_slideshow:
 
-            new RandomTask().execute();
-        } else if (id == R.id.nav_gallery) {
+                break;
+            case R.id.nav_manage:
 
-        } else if (id == R.id.nav_slideshow) {
+                break;
+            case R.id.nav_share:
 
-        } else if (id == R.id.nav_manage) {
+                break;
+            case R.id.nav_send:
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+                break;*/
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -244,42 +256,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
-    class RandomTask extends AsyncTask<Void ,Void,String> {
 
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            try {
-                return HttpIO.getJson("https://www.wikihow.com/api.php?action=app&format=json&num=100&subcmd=featured");
-            } catch (IOException e) {
-                Toast.makeText(MainActivity.this, "error! no connection", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            try {
-                JSONArray root = new JSONObject(s).getJSONObject("app").getJSONArray("articles");
-                int randomNum = ThreadLocalRandom.current().nextInt(0, 100);
-                JSONObject selectedRandom = root.getJSONObject(randomNum);
-                Intent intent = new Intent(MainActivity.this,DuotorialActivity.class);
-                String title = selectedRandom.getString("title");
-                String getDescription = selectedRandom.getString("abstract");
-                String imageURL = selectedRandom.getJSONObject("image").getString("url");
-                intent.putExtra("TITLE",title);
-                intent.putExtra("DESCRIPTION", getDescription);
-                intent.putExtra("IMAGE", imageURL);
-                startActivity(intent);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
 
 
     class FeaturedTask extends AsyncTask<String,Void,String> {

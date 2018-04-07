@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -101,23 +102,36 @@ public class DuotorialActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_random) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        switch (id) {
+            case R.id.nav_home:
+                goToMainFragment(1);
+                break;
+            case R.id.nav_random:
+                new RandomTask(this).execute();
+                break;
+           case R.id.nav_categories:
+               goToMainFragment(0);
+               break;
+           /* case R.id.nav_manage:
 
-        } else if (id == R.id.nav_slideshow) {
+                break;
+            case R.id.nav_share:
 
-        } else if (id == R.id.nav_manage) {
+                break;
+            case R.id.nav_send:
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+                break;*/
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void goToMainFragment(Integer fragmentNumber) {
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.putExtra("Fragment_Num",fragmentNumber.toString());
+        startActivity(intent);
     }
 
     class DuotorialTask extends AsyncTask<String,Void,Document> {
@@ -191,7 +205,7 @@ public class DuotorialActivity extends AppCompatActivity
 
                         String stageDescription = body.select(".step").get(stepNumber).text();
                         dialogData.add(new DuotorialDialogPreview(boldText,imgURL.get(stepNumber)));
-                        stages.add(new DuotorialStep(stepNumber,introTitle,stageDescription,imgURL.get(stepNumber)));
+                        stages.add(new DuotorialStep(stepNumber,"how to "+introTitle,stageDescription,imgURL.get(stepNumber)));
 
 
 
@@ -208,9 +222,15 @@ public class DuotorialActivity extends AppCompatActivity
                             final Dialog dialog = new Dialog(DuotorialActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
                             View dialogView = getLayoutInflater().inflate(R.layout.dialog_list_duotorial, null);
                             ListView lvSteps = dialogView.findViewById(R.id.lvDialog);
-                            DialogAdapter adapter = new DialogAdapter(dialogData,DuotorialActivity.this);
+                            DialogAdapter adapter = new DialogAdapter(dialogData,DuotorialActivity.this,currentStep);
                             lvSteps.setAdapter(adapter);
                             FloatingActionButton btnClose = dialogView.findViewById(R.id.fabExit);
+                            if(currentStep>1) {
+                                int h1 = lvSteps.getHeight();
+                                int h2 = 300;
+
+                                lvSteps.setSelectionFromTop(currentStep, h1/2+450);
+                            }
                             btnClose.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {

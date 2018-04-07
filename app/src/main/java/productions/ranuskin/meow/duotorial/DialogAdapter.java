@@ -19,12 +19,14 @@ import java.util.ArrayList;
  */
 
 public class DialogAdapter extends BaseAdapter {
-    ArrayList<DuotorialDialogPreview> data;
-    Context context;
+    private ArrayList<DuotorialDialogPreview> data;
+    private Context context;
+    private int currentStep;
 
-    public DialogAdapter(ArrayList<DuotorialDialogPreview> data, Context context) {
+    public DialogAdapter(ArrayList<DuotorialDialogPreview> data, Context context, int currentStep) {
         this.data = data;
         this.context = context;
+        this.currentStep = currentStep;
     }
 
     @Override
@@ -49,6 +51,9 @@ public class DialogAdapter extends BaseAdapter {
         View v = inflater.inflate(R.layout.steps_dialog_row,parent,false);
         ImageView ivImage = v.findViewById(R.id.ivStepImage);
         TextView tvBold = v.findViewById(R.id.tvHeadline);
+        if (currentStep==position){
+            v.setBackgroundColor(context.getResources().getColor(R.color.brightGreen));
+        }
 
         Picasso.with(context).load(item.getImageURL()).into(ivImage);
         tvBold.setText(item.getBoldPreview());
