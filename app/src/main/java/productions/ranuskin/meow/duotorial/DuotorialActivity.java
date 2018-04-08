@@ -177,7 +177,7 @@ public class DuotorialActivity extends AppCompatActivity
             mViewPager.setAdapter(mSectionsPagerAdapter);
 
                 try {
-                    initialize();
+                    initialize(document);
 
 
 
@@ -308,13 +308,16 @@ public class DuotorialActivity extends AppCompatActivity
             ivStageImage.animate().alpha(1f).setDuration(500);
         }
 
-        private void initialize() {
+        private void initialize(Document doc) {
 
             currentStep=0;
             tvTitle =findViewById(R.id.tvTitle);
             tvDescription =findViewById(R.id.tvDescription);
             ivStageImage=findViewById(R.id.ivStepImage);
             tvBackground = findViewById(R.id.tvBackground);
+            if (introDescription.length()==0){
+                introDescription = doc.select("div#bodycontents").select(".section p").first().text();
+            }
             introToDuotorial = new DuotorialStep(0,introTitle,introDescription,introImageURL);
             forIntro = new ArrayList<>();
             pbLoad=findViewById(R.id.pbLoad);

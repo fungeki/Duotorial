@@ -59,9 +59,6 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        /*tabBrowse= findViewById(R.id.ivBrowse);
-        tabFeatured= findViewById(R.id.ivPopular);
-        tabMyDuoFragment= findViewById(R.id.ivMyDuo);*/
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -163,6 +160,7 @@ public class MainActivity extends AppCompatActivity
                 InputMethodManager inputManager = (InputMethodManager) getApplicationContext().
                         getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
                 inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+                mViewPager.setCurrentItem(1);
                 return true;
             }
 

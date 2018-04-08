@@ -1,11 +1,14 @@
 package productions.ranuskin.meow.duotorial;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jsoup.Jsoup;
@@ -46,8 +49,8 @@ public class CategoriesDisplayTask extends AsyncTask<String,Void,Document> {
         @Override
         protected void onPostExecute(Document document) {
             super.onPostExecute(document);
-            ArrayList <CategoryDispObj> item = new ArrayList<>();
-            Elements body = document.select("div#bodycontents");
+            final ArrayList <CategoryDispObj> item = new ArrayList<>();
+            final Elements body = document.select("div#bodycontents");
             int counter = 0;
             //go one by one
             for (Element element : body.select(".thumbnail")) {
@@ -64,6 +67,22 @@ public class CategoriesDisplayTask extends AsyncTask<String,Void,Document> {
             lvCategoryDisplay.animate().alpha(1f).setDuration(300);
             CategoriesAdapter adapter = new CategoriesAdapter(item,context);
             lvCategoryDisplay.setAdapter(adapter);
+            lvCategoryDisplay.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String getImage = body.select("div#bodycontents").select(".thumbnail").get(position)
+                            .select("img").first().attr("data-src");
+                    String getTitle = body.select("div#bodycontents").select(".thumbnail").get(position)
+                            .select(".text span").first().text();
+
+
+                    Intent intent = new Intent(context,DuotorialActivity.class);
+                    intent.putExtra("TITLE",getTitle);
+                    intent.putExtra("DESCRIPTION", "");
+                    intent.putExtra("IMAGE", getImage);
+                    context.startActivity(intent);
+                }
+            });
 
         }
     }
