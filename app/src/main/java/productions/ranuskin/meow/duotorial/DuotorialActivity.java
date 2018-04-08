@@ -188,11 +188,13 @@ public class DuotorialActivity extends AppCompatActivity
                    // for (Element element : body.select(".section_text")) {
 
 
+
                     try {
-                        for (Element element : body.select(".section")) {
+                        for (Element element : body.select(".section.steps")) {
 
 
-                            /*String title = element.select("span.mw-headline").text();*/
+
+                            String title = element.select("span.mw-headline").text();
 
                             String boldText="";
                             String imageURL="";
@@ -203,16 +205,13 @@ public class DuotorialActivity extends AppCompatActivity
                                 imageURL = step.select(".content-spacer img").first().attr("data-src");
                                 boldText = body.select(".step b").get(stepNumber).text();
                                 stageDescription = body.select(".step").get(stepNumber).text();
-                                /*if (stepNumber > 1) {//so stages wouldnt cancel itself at the first iterate
-                                    if (stageDescription.equals(stages.get(1).getDescription())) {//stopping parameter for iter
-                                        throw new Exception("end of data");
-                                    }
-                                }*/
+
                                 dialogData.add(new DuotorialDialogPreview(boldText, imageURL));
                                 stepNumber++;
-                                stages.add(new DuotorialStep(stepNumber, "how to " + introTitle, stageDescription, imageURL));
+                                stages.add(new DuotorialStep(stepNumber, title, stageDescription, imageURL));
 
                             }
+
 
                         }
                     } catch (Exception e) {
@@ -221,27 +220,6 @@ public class DuotorialActivity extends AppCompatActivity
 
 
 
-                        /*for (Element img : body.select(".content-spacer img")) {
-                            if (img.attr("data-src").length()>10){
-                                imgURL.add(img.attr("data-src"));
-
-                            }
-                        }
-                         }}
-
-
-                        String boldText = body.select(".step b").get(stepNumber).text();
-
-                        *//*String stageHeadline = body.select(".mw-headline").get(stepNumber).text();*//*
-
-
-                        stepNumber++;
-
-                        String stageDescription = body.select(".step").get(stepNumber).text();
-                        dialogData.add(new DuotorialDialogPreview(boldText,imgURL.get(stepNumber)));
-                        stages.add(new DuotorialStep(stepNumber,"how to "+introTitle,stageDescription,imgURL.get(stepNumber)));
-
-*/
 
 
 
@@ -403,6 +381,35 @@ public class DuotorialActivity extends AppCompatActivity
     }
 }
 //unused code for debugging
+//older versions of the App:
+
+/*for (Element img : body.select(".content-spacer img")) {
+                            if (img.attr("data-src").length()>10){
+                                imgURL.add(img.attr("data-src"));
+
+                            }
+                        }
+                         }}
+
+
+                        String boldText = body.select(".step b").get(stepNumber).text();
+
+                        *//*String stageHeadline = body.select(".mw-headline").get(stepNumber).text();*//*
+
+
+                        stepNumber++;
+
+                        String stageDescription = body.select(".step").get(stepNumber).text();
+                        dialogData.add(new DuotorialDialogPreview(boldText,imgURL.get(stepNumber)));
+                        stages.add(new DuotorialStep(stepNumber,"how to "+introTitle,stageDescription,imgURL.get(stepNumber)));
+
+*/
+
+/*if (stepNumber > 1) {//so stages wouldnt cancel itself at the first iterate
+                                    if (stageDescription.equals(stages.get(1).getDescription())) {//stopping parameter for iter
+                                        throw new Exception("end of data");
+                                    }
+                                }*/
 /*final JSONArray articles = root.getJSONArray("articles");
 
 
