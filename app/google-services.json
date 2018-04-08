@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "998307900407",
+    "firebase_url": "https://duotorial-37a73.firebaseio.com",
+    "project_id": "duotorial-37a73",
+    "storage_bucket": "duotorial-37a73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998307900407:android:e480b4bb7d5f1a76",
+        "android_client_info": {
+          "package_name": "productions.ranuskin.meow.duotorial"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "998307900407-cnilq35q30cetna93tdog9vutbifl2lk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "productions.ranuskin.meow.duotorial",
+            "certificate_hash": "472b6e784b7f90c9609fd20ea615c01af77b841e"
+          }
+        },
+        {
+          "client_id": "998307900407-4e7d1qh9a4mcq9l22hqsnd31qnouqeuj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_-NsaFnriAFqGvHVqKbFPodvMHrzOOuk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "998307900407-4e7d1qh9a4mcq9l22hqsnd31qnouqeuj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
