@@ -4,34 +4,36 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="Home" />
+
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_categories"
+            android:icon="@drawable/ic_duotorial_symbol_white"
+            android:title="Categories" />
+
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_random"
+            android:icon="@drawable/ic_random_dice"
+            android:title="Randuom" />
+
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_bookmarks"
+            android:icon="@drawable/ic_bookmark"
+            android:title="Duokmarks" />
+
+
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Our Duos:">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_about_us"
+                android:title="about us" />
         </menu>
     </item>
 
