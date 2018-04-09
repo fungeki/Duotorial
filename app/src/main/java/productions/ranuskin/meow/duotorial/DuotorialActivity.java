@@ -326,7 +326,6 @@ public class DuotorialActivity extends AppCompatActivity
             tvTitle =findViewById(R.id.tvTitle);
             tvDescription =findViewById(R.id.tvDescription);
             ivStageImage=findViewById(R.id.ivStepImage);
-            tvBackground = findViewById(R.id.tvBackground);
             if (introDescription.length()==0){
                 //introDescription = doc.select("div#bodycontents").select(".section p").first().text();
                 Elements body = doc.select("div#intro>p");

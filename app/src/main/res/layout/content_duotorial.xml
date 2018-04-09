@@ -9,31 +9,6 @@
     tools:layout_editor_absoluteY="81dp"
     tools:showIn="@layout/app_bar_duotorial">
 
-
-    <TextView
-        android:id="@+id/tvBackground"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/colorPrimary"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="@+id/ivTabSteps"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/ivTabClassroom"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/glhContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.714"
-        app:layout_constraintStart_toStartOf="@+id/glvMid"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_classroom" />
-
     <android.support.v4.view.ViewPager
         android:id="@+id/duotorial_container"
         android:layout_width="wrap_content"
