@@ -5,13 +5,6 @@
     tools:context="productions.ranuskin.meow.duotorial.BrowseFragment"
     android:id="@+id/category_container">
 
-    <ListView
-        android:id="@+id/lvCategoriesDisplay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-    </ListView>
 
     <ListView
         android:id="@+id/lvCategories"

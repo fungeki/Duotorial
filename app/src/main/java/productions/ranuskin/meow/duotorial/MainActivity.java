@@ -69,12 +69,12 @@ public class MainActivity extends AppCompatActivity
 
         new FeaturedTask().execute("&subcmd=featured");
         currentFragment=1;
-
         tabBrowse=findViewById(R.id.ivBrowse);
         tabFeatured=findViewById(R.id.ivPopular);
         tabMyDuoFragment = findViewById(R.id.ivMyDuo);
         Intent intent = getIntent();
         if (intent.getStringExtra("Fragment_Num")!=null) {
+            switchToBrowse();
             currentFragment = Integer.parseInt(intent.getStringExtra("Fragment_Num"));
         }
         mViewPager.setCurrentItem(currentFragment);
@@ -201,10 +201,11 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_random:
                 new RandomTask(this).execute();
                 break;
-           /* case R.id.nav_slideshow:
-
+            case R.id.nav_categories:
+                switchToBrowse();
+                mViewPager.setCurrentItem(0);
                 break;
-            case R.id.nav_manage:
+          /*  case R.id.nav_manage:
 
                 break;
             case R.id.nav_share:

@@ -328,7 +328,10 @@ public class DuotorialActivity extends AppCompatActivity
             ivStageImage=findViewById(R.id.ivStepImage);
             tvBackground = findViewById(R.id.tvBackground);
             if (introDescription.length()==0){
-                introDescription = doc.select("div#bodycontents").select(".section p").first().text();
+                //introDescription = doc.select("div#bodycontents").select(".section p").first().text();
+                Elements body = doc.select("div#intro>p");
+                Element description = body.select("p").get(1);
+                introDescription  =description.text();
             }
             introToDuotorial = new DuotorialStep(0,introTitle,introDescription,introImageURL);
             forIntro = new ArrayList<>();
@@ -339,6 +342,8 @@ public class DuotorialActivity extends AppCompatActivity
             dialogData=new ArrayList<>();
             tvDescription.setMovementMethod(new ScrollingMovementMethod());
             ivStepsList = findViewById(R.id.ivStepsList);
+
+
             if (introDescription.length()>100){
             dialogData.add(new DuotorialDialogPreview(introDescription.substring(0,100)+"...",introImageURL));
             } else{
