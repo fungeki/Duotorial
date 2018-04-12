@@ -115,27 +115,35 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void switchToMyDuo() {
-        tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
-        tabFeatured.setImageResource(R.drawable.ic_popular_duo_gray);
+        tabBrowse.animate().alpha(0f).setDuration(500);
+        //tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
+        tabFeatured.animate().alpha(0f).setDuration(500);
+        //tabFeatured.setImageResource(R.drawable.ic_popular_duo_gray);
         tabMyDuoFragment.setAlpha(0f);
         tabMyDuoFragment.setImageResource(R.drawable.ic_my_duo_green);
         tabMyDuoFragment.animate().alpha(1f).setDuration(500);
     }
 
     private void switchToFeatured() {
-        tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
+        tabBrowse.animate().alpha(0f).setDuration(500);
+       // tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
         tabFeatured.setAlpha(0f);
+
         tabFeatured.setImageResource(R.drawable.ic_popular_duo_green);
         tabFeatured.animate().alpha(1f).setDuration(500);
-        tabMyDuoFragment.setImageResource(R.drawable.ic_my_duo_gray);
+        tabMyDuoFragment.animate().alpha(0f).setDuration(500);
+        //tabMyDuoFragment.setImageResource(R.drawable.ic_my_duo_gray);
     }
 
     private void switchToBrowse() {
         tabBrowse.setAlpha(0f);
         tabBrowse.setImageResource(R.drawable.ic_browse_duo_green);
         tabBrowse.animate().alpha(1f).setDuration(500);
-        tabFeatured.setImageResource(R.drawable.ic_popular_duo_gray);
-        tabMyDuoFragment.setImageResource(R.drawable.ic_my_duo_gray);
+
+        tabFeatured.animate().alpha(0f).setDuration(500);
+       // tabFeatured.setImageResource(R.drawable.ic_popular_duo_gray);
+        tabMyDuoFragment.animate().alpha(0f).setDuration(500);
+        //tabMyDuoFragment.setImageResource(R.drawable.ic_my_duo_gray);
     }
 
     @Override

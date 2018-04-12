@@ -2,28 +2,39 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/entire_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="productions.ranuskin.meow.duotorial.DuotorialActivity"
     tools:layout_editor_absoluteY="81dp"
     tools:showIn="@layout/app_bar_duotorial">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/duotorial_container"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/glhContainer" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/glhContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.13" />
+
+    <TextView
+        android:id="@+id/tvStepsBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/brightGreen"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/glhContainer"
+        app:layout_constraintEnd_toStartOf="@+id/glvMid"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvClassBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0"
+        android:background="@color/brightGreen"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/glhContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/glvMid"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.Guideline
         android:id="@+id/glvMid"
@@ -31,6 +42,80 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
+
+    <ImageView
+        android:id="@+id/ivclassroomTitle"
+        android:layout_width="0dp"
+        android:layout_height="15dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:scaleType="fitStart"
+        app:layout_constraintBottom_toTopOf="@+id/glhContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ivClassroomIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_classroom_title" />
+
+    <ImageView
+
+        android:id="@+id/ivstepsTitle"
+        android:layout_width="0dp"
+        android:layout_height="17dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:scaleType="fitStart"
+        app:layout_constraintBottom_toTopOf="@+id/glhContainer"
+        app:layout_constraintEnd_toStartOf="@+id/glvMid"
+        app:layout_constraintStart_toEndOf="@+id/ivStepsIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_steps_title" />
+
+    <ImageView
+        android:id="@+id/ivClassroomIcon"
+        android:layout_width="57dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/glhContainer"
+        app:layout_constraintStart_toStartOf="@+id/glvMid"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_classroom" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/glhContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.09" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/duotorial_container"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="#ffffff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/glhContainer"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/ivStepsIcon"
+        android:layout_width="53dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/glhContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_steps" />
 
     <ProgressBar
         android:id="@+id/pbLoad"
@@ -47,23 +132,13 @@
         app:layout_constraintTop_toTopOf="@+id/glhContainer"
         app:layout_constraintVertical_bias="0.365" />
 
-    <ImageView
-        android:id="@+id/ivTabSteps"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/glhContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_stesps" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.36" />
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/ivExpanded"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:scaleType="fitCenter"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_launcher_background" />
 
 </android.support.constraint.ConstraintLayout>
