@@ -1,6 +1,7 @@
 package productions.ranuskin.meow.duotorial;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.sql.Timestamp;
+
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +25,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -39,6 +50,11 @@ public class MainActivity extends AppCompatActivity
     private ImageView tabMyDuoFragment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private Integer currentFragment;
+    private FirebaseUser user;
+    private boolean toasted;
+
+    private DatabaseReference usersDatabase;
+
 
     private ViewPager mViewPager;
     @Override
@@ -47,11 +63,34 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         initialize();
 
+        final String id = user.getUid();
+
+        usersDatabase.child(id).
+                addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (!dataSnapshot.exists()){
+                String userName = user.getDisplayName();
+                String email = user.getEmail();
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String lastLogin=timestamp.toString();
+                User mUser = new User(userName,email,0,lastLogin);
+
+                usersDatabase.child(id).setValue(mUser);}
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
     private void
     initialize() {
+        usersDatabase = FirebaseDatabase.getInstance().getReference("users");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -78,7 +117,20 @@ public class MainActivity extends AppCompatActivity
             currentFragment = Integer.parseInt(intent.getStringExtra("Fragment_Num"));
         }
         mViewPager.setCurrentItem(currentFragment);
-
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        toasted=false;
+        if (getIntent().getStringExtra("TOASTED")!=null){
+            toasted=true;
+        }
+        if (user != null) {
+            // User is signed in
+            if (!toasted){
+            Toast.makeText(this, "Welcome "+user.getDisplayName(), Toast.LENGTH_SHORT).show();}
+        } else {
+            // No user is signed in
+            Intent backIntent = new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(backIntent);
+        }
     }
 
     private void viewPagerChangeListener() {
@@ -253,7 +305,7 @@ public class MainActivity extends AppCompatActivity
 
     private class FeaturedTask extends AsyncTask<String,Void,String> {
 
-
+        private DatabaseReference mDatabase;
         @Override
         protected String doInBackground(String... strings) {
             try {
@@ -268,6 +320,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String s) {
             try {
+                mDatabase = FirebaseDatabase.getInstance().getReference();
                 JSONObject root = new JSONObject(s).getJSONObject("app");
                 final JSONArray articles = root.getJSONArray("articles");
 
@@ -295,14 +348,16 @@ public class MainActivity extends AppCompatActivity
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         try {
                             JSONObject titleFetch = articles.getJSONObject(position);
-                            String getTitle = titleFetch.getString("title");
+                            final String getTitle = titleFetch.getString("title");
                             String getDescription = titleFetch.getString("abstract");
                             getDescription = Jsoup.parse(getDescription).text();
                             String getImage = titleFetch.getJSONObject("image").getString("url");
-                            Intent intent = new Intent(MainActivity.this,DuotorialActivity.class);
+                            final Intent intent = new Intent(MainActivity.this,DuotorialActivity.class);
                             intent.putExtra("TITLE",getTitle);
                             intent.putExtra("DESCRIPTION", getDescription);
                             intent.putExtra("IMAGE", getImage);
+
+                            addTheDuotorialToDatabase(getTitle,getImage);
                             startActivity(intent);
 
                         } catch (Exception e) {
@@ -315,6 +370,74 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }
+
+        private void addTheDuotorialToDatabase(final String getTitle, final String getImage) {
+
+            final DatabaseReference userDuoAmount = FirebaseDatabase.getInstance().getReference().child("users")
+                    .child(user.getUid()).child("duotorialAmount");
+            userDuoAmount.runTransaction(new Transaction.Handler() {
+                @Override
+                public Transaction.Result doTransaction(final MutableData mutableData) {
+                    Integer currentValue = mutableData.getValue(Integer.class);
+                    /*if (currentValue == null) {
+                        mutableData.setValue(0);
+                    } else {
+                        currentValue++;
+                        mutableData.setValue(currentValue);
+                    }*/
+
+
+
+
+                    final DatabaseReference duoRef = FirebaseDatabase.getInstance().getReference().child("users")
+                            .child(user.getUid()).child("history");
+                    if (currentValue>=50) {
+                        currentValue %= 50;
+                        duoRef.child(currentValue.toString()).setValue(null);
+                    }
+                    final Integer finalCurrentValue = currentValue;
+                    duoRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Integer i = 0;
+                            boolean flag = false;
+
+                            while (dataSnapshot.child(i.toString()).hasChildren()){
+                                if (dataSnapshot.child(i.toString()).hasChild(getTitle)){
+                                    duoRef.child(i.toString()).child(getTitle).setValue(getImage);
+                                    //duoRef.child(i.toString()).child(getImage).setValue(1);
+                                    flag = true;
+                                    break;
+                                }
+                                i++;
+
+                            }
+                            if (!flag){
+                                duoRef.child(finalCurrentValue.toString()).child(getTitle).setValue(getImage);
+                               // duoRef.child(finalCurrentValue.toString()).child(getImage).setValue(1);
+                                userDuoAmount.setValue(finalCurrentValue+1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+
+                    return Transaction.success(mutableData);
+                }
+
+                @Override
+                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                }
+            });
+
+        }
+
     }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

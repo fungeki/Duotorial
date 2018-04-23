@@ -38,6 +38,8 @@ import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chrisbanes.photoview.PhotoViewAttacher;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
@@ -51,6 +53,7 @@ import java.util.List;
 
 public class DuotorialActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
 
 
 
@@ -76,6 +79,8 @@ public class DuotorialActivity extends AppCompatActivity
         String introImage = intent.getStringExtra("IMAGE");
         String description = intent.getStringExtra("DESCRIPTION");
         new DuotorialTask().execute(title,introImage,description);
+
+
 
 
     }
@@ -147,6 +152,7 @@ public class DuotorialActivity extends AppCompatActivity
     private void goToMainFragment(Integer fragmentNumber) {
         Intent intent = new Intent(this,MainActivity.class);
         intent.putExtra("Fragment_Num",fragmentNumber.toString());
+        intent.putExtra("TOASTED","true");
         startActivity(intent);
     }
 
@@ -381,7 +387,8 @@ public class DuotorialActivity extends AppCompatActivity
                         update();
                     }else {
 
-                        Toast.makeText(DuotorialActivity.this, "last stage!", Toast.LENGTH_SHORT).show();
+                        tvNext.setBackgroundResource(android.R.color.transparent);
+                       // Toast.makeText(DuotorialActivity.this, "last stage!", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -392,8 +399,12 @@ public class DuotorialActivity extends AppCompatActivity
             tvTitle.setText(stages.get(currentStep).getTitle());
             tvDescription.setText(stages.get(currentStep).getDescription());
             if (currentStep<stages.size()-1){
-                tvNext.setText("To Step "+(currentStep+1));
-            }else tvNext.setText("Youre at the Last Step!");
+                tvNext.setText(" To Step "+(currentStep+1)+ " ");
+                tvNext.setBackgroundResource(R.drawable.rectangle);
+            }else {
+                tvNext.setText("Youre at the\n Last Step!");
+                tvNext.setBackgroundResource(android.R.color.transparent);
+            }
 
 
             Picasso.with(DuotorialActivity.this).load(stages.get(currentStep).getImageURL()).into(ivStageImage);

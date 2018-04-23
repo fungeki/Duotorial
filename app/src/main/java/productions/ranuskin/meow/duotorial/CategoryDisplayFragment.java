@@ -18,9 +18,9 @@ import android.widget.ProgressBar;
 public class CategoryDisplayFragment extends Fragment {
 
 
-    ListView lvCategoryDisplayList;
-    FloatingActionButton fabRestart;
-    ProgressBar pbCategoryLoad;
+    private ListView lvCategoryDisplayList;
+    private FloatingActionButton fabRestart;
+    private ProgressBar pbCategoryLoad;
     public CategoryDisplayFragment() {
         // Required empty public constructor
     }
