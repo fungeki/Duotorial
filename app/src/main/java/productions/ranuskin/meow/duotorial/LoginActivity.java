@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
         btnGoogle=findViewById(R.id.btnGoogle);
@@ -42,6 +43,11 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        buttonLogin();
+
+    }
+
+    private void buttonLogin() {
         btnGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,12 +56,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     // User is signed in
                     userIsSignedIn();
-                } else {
-                    // No user is signed in
                 }
             }
         });
-
     }
 
     private void userIsSignedIn() {
@@ -66,10 +69,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user!=null){
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account!=null){
             userIsSignedIn();
-        }
+        }}
     }
 
     private void signIn() {

@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initialize();
-
         final String id = user.getUid();
 
         usersDatabase.child(id).
@@ -265,15 +264,6 @@ public class MainActivity extends AppCompatActivity
                 switchToBrowse();
                 mViewPager.setCurrentItem(0);
                 break;
-          /*  case R.id.nav_manage:
-
-                break;
-            case R.id.nav_share:
-
-                break;
-            case R.id.nav_send:
-
-                break;*/
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

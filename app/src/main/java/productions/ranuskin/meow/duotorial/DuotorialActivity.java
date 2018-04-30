@@ -133,15 +133,7 @@ public class DuotorialActivity extends AppCompatActivity
            case R.id.nav_categories:
                goToMainFragment(0);
                break;
-           /* case R.id.nav_manage:
 
-                break;
-            case R.id.nav_share:
-
-                break;
-            case R.id.nav_send:
-
-                break;*/
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

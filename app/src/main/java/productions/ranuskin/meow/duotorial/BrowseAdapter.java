@@ -50,7 +50,6 @@ public class BrowseAdapter extends BaseAdapter {
         TextView tvTitle = v.findViewById(R.id.tvCategoryTitle);
         TextView tvTitle2 = v.findViewById(R.id.tvCategoryTitle2);
 
-
         tvTitle.setText(item.getHeaderFirst());
         ivIcon.setImageResource(item.getImageRes());
         tvTitle2.setText(item.getHeaderSecond());
