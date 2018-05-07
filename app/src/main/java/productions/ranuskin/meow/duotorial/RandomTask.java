@@ -5,6 +5,16 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,6 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomTask extends AsyncTask<Void ,Void,String> {
 
+    private FirebaseUser user;
 
     private Context context;
 
@@ -49,11 +60,13 @@ public class RandomTask extends AsyncTask<Void ,Void,String> {
             intent.putExtra("TITLE",title);
             intent.putExtra("DESCRIPTION", getDescription);
             intent.putExtra("IMAGE", imageURL);
+            AddToDuotorialDatabase.addData(title,imageURL);
             context.startActivity(intent);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
     }
 }

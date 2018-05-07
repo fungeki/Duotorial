@@ -1,8 +1,14 @@
 package productions.ranuskin.meow.duotorial;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,7 +25,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -28,6 +36,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoView;
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
@@ -37,9 +49,13 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DuotorialActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+
+
 
 
     @Override
@@ -64,7 +80,12 @@ public class DuotorialActivity extends AppCompatActivity
         String description = intent.getStringExtra("DESCRIPTION");
         new DuotorialTask().execute(title,introImage,description);
 
+
+
+
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -131,28 +152,32 @@ public class DuotorialActivity extends AppCompatActivity
     private void goToMainFragment(Integer fragmentNumber) {
         Intent intent = new Intent(this,MainActivity.class);
         intent.putExtra("Fragment_Num",fragmentNumber.toString());
+        intent.putExtra("TOASTED","true");
         startActivity(intent);
     }
 
     private class DuotorialTask extends AsyncTask<String,Void,Document> {
+       private TextView tvStepsBackground;
+       private TextView tvClassroomBackground;
        private SectionsPagerAdapterDuotorial mSectionsPagerAdapter;
        private ViewPager mViewPager;
        private ImageView ivStageImage;
        private TextView tvTitle;
        private TextView tvDescription;
-       private TextView tvBackground;
        private int currentStep;
        private ArrayList<DuotorialStep> forIntro;
        private ArrayList<DuotorialDialogPreview> dialogData;
        private DuotorialStep introToDuotorial;
        private ArrayList<DuotorialStep> stages;
-       private ImageView ivStepsList;
+        private ImageView ivStepsList;
        private String introTitle;
        private String introDescription;
        private String introImageURL;
        private ProgressBar pbLoad;
-       private FloatingActionButton fabNext;
-
+       private ImageView ivExpanded;
+       private TextView tvNext;
+        private Animator mCurrentAnimator;
+        private int mShortAnimationDuration;
 
         @Override
         protected Document doInBackground(String... strings) {
@@ -161,9 +186,8 @@ public class DuotorialActivity extends AppCompatActivity
             introDescription=strings[2];
             try {
 
-                return Jsoup.connect("https://www.wikihow.com/"+ introTitle).timeout(6000).get();
+                return Jsoup.connect("https://www.wikihow.com/"+ introTitle).timeout(9000).get();
             } catch (IOException e) {
-                Toast.makeText(DuotorialActivity.this, "error", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
             return null;
@@ -172,106 +196,49 @@ public class DuotorialActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Document document) {
 
-            mSectionsPagerAdapter = new SectionsPagerAdapterDuotorial(getSupportFragmentManager());
-            mViewPager = (ViewPager) findViewById(R.id.duotorial_container);
-            mViewPager.setAdapter(mSectionsPagerAdapter);
 
-                try {
+
+
+            try {
                     initialize(document);
-
-
-
-
-                    Elements body = document.select("div#bodycontents");
-                    int stepNumber = 0;
-                    ArrayList<String> imgURL = new ArrayList<>();
-                   // for (Element element : body.select(".section_text")) {
-
-
-
-                    try {
-                        for (Element element : body.select(".section.steps")) {
-
-
-
-                            String title = element.select("span.mw-headline").text();
-
-                            String boldText="";
-                            String imageURL="";
-                            String stageDescription="";
-
-                            for (Element step : element.select("li.hasimage")) {
-
-                                imageURL = step.select(".content-spacer img").first().attr("data-src");
-                                boldText = body.select(".step b").get(stepNumber).text();
-                                stageDescription = body.select(".step").get(stepNumber).text();
-
-                                dialogData.add(new DuotorialDialogPreview(boldText, imageURL));
-                                stepNumber++;
-                                stages.add(new DuotorialStep(stepNumber, title, stageDescription, imageURL));
-
-                            }
-
-
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-
-
-
-
-
+                    jsoupCoding(document);
                     pbLoad.setVisibility(View.GONE);
-
+                    mViewPagerListener();
                     update();
                     next();
-                    ivStepsList.setOnClickListener(new View.OnClickListener() {
+                    stepListListener();
+                    tabListener();
+                    final PhotoView pvExpanded = findViewById(R.id.ivExpanded);
+
+                    ivStageImage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            final Dialog dialog = new Dialog(DuotorialActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                            View dialogView = getLayoutInflater().inflate(R.layout.dialog_list_duotorial, null);
-                            ListView lvSteps = dialogView.findViewById(R.id.lvDialog);
-                            DialogAdapter adapter = new DialogAdapter(dialogData,DuotorialActivity.this,currentStep);
-                            lvSteps.setAdapter(adapter);
-                            FloatingActionButton btnClose = dialogView.findViewById(R.id.fabExit);
-                            if(currentStep>1) {
-                                int h1 = lvSteps.getHeight();
-                                int h2 = 300;
 
-                                lvSteps.setSelectionFromTop(currentStep, h1/2+450);
-                            }
-                            btnClose.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            lvSteps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                    currentStep = i;
-                                    dialog.dismiss();
-                                }
-                            });
-                            dialog.setContentView(dialogView);
-                            dialog.show();
-                            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialogInterface) {
-                                    update();
-                                }
-                            });
+
+
+                            Picasso.with(DuotorialActivity.this).load(stages.get(currentStep).getImageURL()).into(pvExpanded);
+                            pvExpanded.setVisibility(View.VISIBLE);
+                           // ivExpanded.setVisibility(View.VISIBLE);
+
+
                         }
                     });
+                    pvExpanded.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pvExpanded.setVisibility(View.GONE);
+                        }
+                    });
+                    /*ivExpanded.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ivExpanded.setVisibility(View.GONE);
+                        }
+                    });*/
 
 
 
-
-
-                } catch (Exception e1) {
+            } catch (Exception e1) {
                     e1.printStackTrace();
                 }
                 mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -283,7 +250,6 @@ public class DuotorialActivity extends AppCompatActivity
                     @Override
                     public void onPageSelected(int position) {
 
-
                     }
 
                     @Override
@@ -294,8 +260,125 @@ public class DuotorialActivity extends AppCompatActivity
 
         }
 
+        private void tabListener() {
+            tvStepsBackground.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewPager.setCurrentItem(0);
+                }
+            });
+            tvClassroomBackground.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewPager.setCurrentItem(1);
+                }
+            });
+        }
+
+        private void jsoupCoding(Document document) {
+            Elements body = document.select("div#bodycontents");
+            int stepNumber = 0;
+            ArrayList<String> imgURL = new ArrayList<>();
+            // for (Element element : body.select(".section_text")) {
+
+
+            try {
+                for (Element element : body.select(".section.steps")) {
+
+
+
+                    String title = element.select("span.mw-headline").text();
+
+                    String boldText="";
+                    String imageURL="";
+                    String stageDescription="";
+
+                    for (Element step : element.select("li.hasimage")) {
+
+                        imageURL = step.select(".content-spacer img").first().attr("data-src");
+                        boldText = body.select(".step b").get(stepNumber).text();
+                        stageDescription = body.select(".step").get(stepNumber).text();
+
+                        dialogData.add(new DuotorialDialogPreview(boldText, imageURL));
+                        stepNumber++;
+                        stages.add(new DuotorialStep(stepNumber, title, stageDescription, imageURL));
+
+                    }
+
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void stepListListener() {
+            ivStepsList.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Dialog dialog = new Dialog(DuotorialActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                    View dialogView = getLayoutInflater().inflate(R.layout.dialog_list_duotorial, null);
+                    ListView lvSteps = dialogView.findViewById(R.id.lvDialog);
+                    DialogAdapter adapter = new DialogAdapter(dialogData,DuotorialActivity.this,currentStep);
+                    lvSteps.setAdapter(adapter);
+                    FloatingActionButton btnClose = dialogView.findViewById(R.id.fabExit);
+                    if(currentStep>1) {
+                        int h1 = lvSteps.getHeight();
+                        int h2 = 300;
+
+                        lvSteps.setSelectionFromTop(currentStep, h1/2+450);
+                    }
+                    btnClose.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+                    lvSteps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            currentStep = i;
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.setContentView(dialogView);
+                    dialog.show();
+                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            update();
+                        }
+                    });
+                }
+            });
+        }
+
+        private void mViewPagerListener() {
+            mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+
+                    if (position == 1){
+                        toClassroom();
+                    }else{
+                        toSteps();
+                    }
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+        }
+
         private void next() {
-            fabNext.setOnClickListener(new View.OnClickListener() {
+            tvNext.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -303,7 +386,9 @@ public class DuotorialActivity extends AppCompatActivity
                         currentStep++;
                         update();
                     }else {
-                        Toast.makeText(DuotorialActivity.this, "last stage!", Toast.LENGTH_SHORT).show();
+
+                        tvNext.setBackgroundResource(android.R.color.transparent);
+                       // Toast.makeText(DuotorialActivity.this, "last stage!", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -313,6 +398,15 @@ public class DuotorialActivity extends AppCompatActivity
         private void update() {
             tvTitle.setText(stages.get(currentStep).getTitle());
             tvDescription.setText(stages.get(currentStep).getDescription());
+            if (currentStep<stages.size()-1){
+                tvNext.setText(" To Step "+(currentStep+1)+ " ");
+                tvNext.setBackgroundResource(R.drawable.rectangle);
+            }else {
+                tvNext.setText("Youre at the\n Last Step!");
+                tvNext.setBackgroundResource(android.R.color.transparent);
+            }
+
+
             Picasso.with(DuotorialActivity.this).load(stages.get(currentStep).getImageURL()).into(ivStageImage);
             pbLoad.setVisibility(View.GONE);
             tvTitle.animate().alpha(1f).setDuration(500);
@@ -322,6 +416,10 @@ public class DuotorialActivity extends AppCompatActivity
 
         private void initialize(Document doc) {
 
+
+            mSectionsPagerAdapter = new SectionsPagerAdapterDuotorial(getSupportFragmentManager());
+            mViewPager = (ViewPager) findViewById(R.id.duotorial_container);
+            mViewPager.setAdapter(mSectionsPagerAdapter);
             currentStep=0;
             tvTitle =findViewById(R.id.tvTitle);
             tvDescription =findViewById(R.id.tvDescription);
@@ -335,12 +433,15 @@ public class DuotorialActivity extends AppCompatActivity
             introToDuotorial = new DuotorialStep(0,introTitle,introDescription,introImageURL);
             forIntro = new ArrayList<>();
             pbLoad=findViewById(R.id.pbLoad);
-            fabNext=findViewById(R.id.fabNext);
+            tvNext=findViewById(R.id.tvNextStep);
             stages = new ArrayList<>();
             stages.add(introToDuotorial);
             dialogData=new ArrayList<>();
             tvDescription.setMovementMethod(new ScrollingMovementMethod());
             ivStepsList = findViewById(R.id.ivStepsList);
+            tvClassroomBackground = findViewById(R.id.tvClassBackground);
+            tvStepsBackground = findViewById(R.id.tvStepsBackground);
+
 
 
             if (introDescription.length()>100){
@@ -348,6 +449,8 @@ public class DuotorialActivity extends AppCompatActivity
             } else{
                 dialogData.add(new DuotorialDialogPreview(introDescription ,introImageURL));
             }
+
+
             /*stages.add(new DuotorialStage(forIntro,introTitle));*/
 
         }
@@ -381,8 +484,20 @@ public class DuotorialActivity extends AppCompatActivity
             }
 
         }
+        private void toClassroom(){
+            tvStepsBackground.animate().alpha(0f).setDuration(500);
+            tvClassroomBackground.animate().alpha(1f).setDuration(500);
+        }
+
+        private void toSteps(){
+            tvClassroomBackground.animate().alpha(0f).setDuration(500);
+            tvStepsBackground.animate().alpha(1f).setDuration(500);
+        }
+
+
 
     }
+
 }
 //unused code for debugging
 //older versions of the App:

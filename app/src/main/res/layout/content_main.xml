@@ -45,7 +45,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.8697917" />
+        app:layout_constraintGuide_percent="0.83" />
+
+    <ImageView
+        android:id="@+id/ivBrowse2"
+        android:layout_width="94dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:onClick="switchTabs"
+        app:layout_constraintBottom_toTopOf="@+id/glhStart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/glhStart"
+        app:layout_constraintVertical_bias="0.586"
+        app:srcCompat="@drawable/ic_browse_duo_gray" />
+
+    <ImageView
+        android:id="@+id/ivBrowse"
+        android:layout_width="94dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:onClick="switchTabs"
+        app:layout_constraintBottom_toTopOf="@+id/glhStart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/glhStart"
+        app:layout_constraintVertical_bias="0.586"
+        app:srcCompat="@drawable/ic_browse_duo_gray" />
 
     <android.support.constraint.Guideline
         android:id="@+id/glhStart"
@@ -55,17 +81,17 @@
         app:layout_constraintGuide_percent="0.06" />
 
     <ImageView
-        android:id="@+id/ivBrowse"
-        android:onClick="switchTabs"
+        android:id="@+id/ivPopular2"
         android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:onClick="switchTabs"
         app:layout_constraintBottom_toTopOf="@+id/glhStart"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/glv50"
+        app:layout_constraintStart_toStartOf="@+id/glv50"
         app:layout_constraintTop_toTopOf="@+id/glhStart"
-        app:layout_constraintVertical_bias="0.586"
-        app:srcCompat="@drawable/ic_browse_duo_gray" />
+        app:srcCompat="@drawable/ic_popular_duo_gray" />
 
     <ImageView
         android:id="@+id/ivPopular"
@@ -81,16 +107,33 @@
         app:srcCompat="@drawable/ic_popular_duo_gray" />
 
     <ImageView
-        android:id="@+id/ivMyDuo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/ivMyDuo2"
+        android:layout_width="100dp"
+        android:layout_height="38dp"
         android:layout_marginEnd="8dp"
-        android:onClick="switchTabs"
         android:layout_marginTop="8dp"
+        android:onClick="switchTabs"
         app:layout_constraintBottom_toTopOf="@+id/glhStart"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/glhStart"
+        app:layout_constraintVertical_bias="0.589"
+        app:srcCompat="@drawable/ic_my_duo_gray" />
+
+    <ImageView
+        android:id="@+id/ivMyDuo"
+        android:layout_width="100dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="switchTabs"
+        app:layout_constraintBottom_toTopOf="@+id/glhStart"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/glhStart"
+        app:layout_constraintVertical_bias="0.589"
         app:srcCompat="@drawable/ic_my_duo_gray" />
 
 
