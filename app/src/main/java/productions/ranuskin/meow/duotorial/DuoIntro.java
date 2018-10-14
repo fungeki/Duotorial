@@ -1,13 +1,9 @@
 package productions.ranuskin.meow.duotorial;
 
-import android.support.annotation.DrawableRes;
-
-import java.net.URL;
-
 /**
- * Created by Ran on 3/31/2018.
+ * Created by Ran Loock on 3/31/2018.
+ *  Copyright © 2018 Ran Loock. All rights reserved.
  */
-
 public class DuoIntro {
     String title;
     String intro;

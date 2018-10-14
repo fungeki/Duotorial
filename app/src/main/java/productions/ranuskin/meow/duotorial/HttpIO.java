@@ -1,5 +1,9 @@
 package productions.ranuskin.meow.duotorial;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.io.IOException;
 
 import okhttp3.OkHttpClient;
@@ -20,6 +24,15 @@ public class HttpIO {
 
         Response response = client.newCall(request).execute();
         return response.body().string();
+    }
+    public static boolean isOnline(Context context) {
+        ConnectivityManager conMgr = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+
+        if(netInfo == null || !netInfo.isConnected() || !netInfo.isAvailable()){
+            return false;
+        }
+        return true;
     }
 
 }

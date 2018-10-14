@@ -1,8 +1,5 @@
 package productions.ranuskin.meow.duotorial;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-
 /**
  * Created by Ran on 4/19/2018.
  */

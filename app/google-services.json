@@ -15,12 +15,32 @@
       },
       "oauth_client": [
         {
+          "client_id": "998307900407-pp2v7a3e5b70bd6u8ncjcheljr1v5sct.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "productions.ranuskin.meow.duotorial",
+            "certificate_hash": "2dd660d9a336f9ea572ecd1466f1e49de95f1cb1"
+          }
+        },
+        {
+          "client_id": "998307900407-i2hqs5lomi8l51g8psh9rku12esrohjr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "productions.ranuskin.meow.duotorial",
+            "certificate_hash": "7819b45389072d7af5387632df1fa9d10656bef4"
+          }
+        },
+        {
           "client_id": "998307900407-cnilq35q30cetna93tdog9vutbifl2lk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "productions.ranuskin.meow.duotorial",
             "certificate_hash": "472b6e784b7f90c9609fd20ea615c01af77b841e"
           }
+        },
+        {
+          "client_id": "998307900407-4e7d1qh9a4mcq9l22hqsnd31qnouqeuj.apps.googleusercontent.com",
+          "client_type": 3
         },
         {
           "client_id": "998307900407-4e7d1qh9a4mcq9l22hqsnd31qnouqeuj.apps.googleusercontent.com",

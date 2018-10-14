@@ -1,24 +1,24 @@
 package productions.ranuskin.meow.duotorial;
 
-import java.sql.Timestamp;
-
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.SearchView;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -40,10 +40,11 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private ImageView tabBrowse;
     private ImageView tabFeatured;
@@ -57,6 +58,8 @@ public class MainActivity extends AppCompatActivity
 
 
     private ViewPager mViewPager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,24 +69,25 @@ public class MainActivity extends AppCompatActivity
 
         usersDatabase.child(id).
                 addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (!dataSnapshot.exists()){
-                String userName = user.getDisplayName();
-                String email = user.getEmail();
-                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                String lastLogin=timestamp.toString();
-                User mUser = new User(userName,email,0,lastLogin);
+                        if (!dataSnapshot.exists()) {
+                            String userName = user.getDisplayName();
+                            String email = user.getEmail();
+                            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                            String lastLogin = timestamp.toString();
+                            User mUser = new User(userName, email, 0, lastLogin);
 
-                usersDatabase.child(id).setValue(mUser);}
-            }
+                            usersDatabase.child(id).setValue(mUser);
+                        }
+                    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                    }
+                });
 
     }
 
@@ -105,29 +109,44 @@ public class MainActivity extends AppCompatActivity
         viewPagerChangeListener();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        new FeaturedTask().execute("&subcmd=featured");
-        currentFragment=1;
-        tabBrowse=findViewById(R.id.ivBrowse);
-        tabFeatured=findViewById(R.id.ivPopular);
+        if (HttpIO.isOnline(MainActivity.this)) {
+            new FeaturedTask().execute("&subcmd=featured");
+        } else {
+            AlertDialog.Builder builder =new AlertDialog.Builder(this);
+            builder.setTitle("No internet Connection");
+            builder.setMessage("Please turn on internet connection to continue");
+            builder.setPositiveButton("connected", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    initialize();
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+        currentFragment = 1;
+        tabBrowse = findViewById(R.id.ivBrowse);
+        tabFeatured = findViewById(R.id.ivPopular);
         tabMyDuoFragment = findViewById(R.id.ivMyDuo);
         Intent intent = getIntent();
-        if (intent.getStringExtra("Fragment_Num")!=null) {
+        if (intent.getStringExtra("Fragment_Num") != null) {
             switchToBrowse();
             currentFragment = Integer.parseInt(intent.getStringExtra("Fragment_Num"));
         }
         mViewPager.setCurrentItem(currentFragment);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        toasted=false;
-        if (getIntent().getStringExtra("TOASTED")!=null){
-            toasted=true;
+        toasted = false;
+        if (getIntent().getStringExtra("TOASTED") != null) {
+            toasted = true;
         }
         if (user != null) {
             // User is signed in
-            if (!toasted){
-            Toast.makeText(this, "Welcome "+user.getDisplayName(), Toast.LENGTH_SHORT).show();}
+            if (!toasted) {
+                Toast.makeText(this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+            }
         } else {
             // No user is signed in
-            Intent backIntent = new Intent(MainActivity.this,LoginActivity.class);
+            Intent backIntent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(backIntent);
         }
     }
@@ -144,7 +163,7 @@ public class MainActivity extends AppCompatActivity
             public void onPageSelected(int position) {
 
 
-                switch (position){
+                switch (position) {
                     case 0:
                         switchToBrowse();
                         break;
@@ -177,7 +196,7 @@ public class MainActivity extends AppCompatActivity
 
     private void switchToFeatured() {
         tabBrowse.animate().alpha(0f).setDuration(500);
-       // tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
+        // tabBrowse.setImageResource(R.drawable.ic_browse_duo_gray);
         tabFeatured.setAlpha(0f);
 
         tabFeatured.setImageResource(R.drawable.ic_popular_duo_green);
@@ -192,7 +211,7 @@ public class MainActivity extends AppCompatActivity
         tabBrowse.animate().alpha(1f).setDuration(500);
 
         tabFeatured.animate().alpha(0f).setDuration(500);
-       // tabFeatured.setImageResource(R.drawable.ic_popular_duo_gray);
+        // tabFeatured.setImageResource(R.drawable.ic_popular_duo_gray);
         tabMyDuoFragment.animate().alpha(0f).setDuration(500);
         //tabMyDuoFragment.setImageResource(R.drawable.ic_my_duo_gray);
     }
@@ -203,7 +222,25 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you want to exit?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            finishAffinity();
+                            System.exit(0);
+
+
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+
         }
     }
 
@@ -215,7 +252,7 @@ public class MainActivity extends AppCompatActivity
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                new FeaturedTask().execute("&subcmd=search&q="+query);
+                new FeaturedTask().execute("&subcmd=search&q=" + query);
                 InputMethodManager inputManager = (InputMethodManager) getApplicationContext().
                         getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
                 inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
@@ -264,6 +301,14 @@ public class MainActivity extends AppCompatActivity
                 switchToBrowse();
                 mViewPager.setCurrentItem(0);
                 break;
+            case R.id.nav_bookmarks:
+                Intent intent = new Intent(MainActivity.this, BookmarkActivity.class);
+                startActivity(intent) ;
+                break;
+            case R.id.nav_about:
+                Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(aboutIntent);
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -272,11 +317,9 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     public void switchTabs(View view) {
-        switch (view.getId()){
-            case
-                R.id.ivBrowse:
+        switch (view.getId()) {
+            case R.id.ivBrowse:
                 switchToBrowse();
                 mViewPager.setCurrentItem(0);
                 break;
@@ -292,14 +335,15 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-    private class FeaturedTask extends AsyncTask<String,Void,String> {
+    private class FeaturedTask extends AsyncTask<String, Void, String> {
 
         private DatabaseReference mDatabase;
+
         @Override
         protected String doInBackground(String... strings) {
+
             try {
-                return HttpIO.getJson("https://www.wikihow.com/api.php?action=app&format=json&num=50"+strings[0]);
+                return HttpIO.getJson("https://www.wikihow.com/api.php?action=app&format=json&num=50" + strings[0]);
             } catch (IOException e) {
                 Toast.makeText(MainActivity.this, "error! no connection", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
@@ -317,22 +361,24 @@ public class MainActivity extends AppCompatActivity
 
                 ArrayList<DuoIntro> featured = new ArrayList<>();
 
-                for (int i = 0; i <50 ; i++) {
+                for (int i = 0; i < 50; i++) {
 
                     JSONObject introObject = articles.getJSONObject(i);
                     String title = introObject.getString("title");
-                    title= "How to " + title;
+                    title = "How to " + title;
                     String description = introObject.getString("abstract");
                     description = Jsoup.parse(description).text();
                     String imageURL = introObject.getJSONObject("image").getString("url");
-                    featured.add(new DuoIntro(title,description,imageURL));
+                    featured.add(new DuoIntro(title, description, imageURL));
 
                 }
 
 
                 final ListView lvFeatured = findViewById(R.id.lvFeatured);
-                IntroAdapter adapter = new IntroAdapter(featured,MainActivity.this);
+                IntroAdapter adapter = new IntroAdapter(featured, MainActivity.this);
                 lvFeatured.setAdapter(adapter);
+
+                lvFeatured.setClickable(false);
                 lvFeatured.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -342,12 +388,13 @@ public class MainActivity extends AppCompatActivity
                             String getDescription = titleFetch.getString("abstract");
                             getDescription = Jsoup.parse(getDescription).text();
                             String getImage = titleFetch.getJSONObject("image").getString("url");
-                            final Intent intent = new Intent(MainActivity.this,DuotorialActivity.class);
-                            intent.putExtra("TITLE",getTitle);
+                            final Intent intent = new Intent(MainActivity.this, DuotorialActivity.class);
+                            intent.putExtra("TITLE", getTitle);
                             intent.putExtra("DESCRIPTION", getDescription);
                             intent.putExtra("IMAGE", getImage);
 
                             addTheDuotorialToDatabase(getTitle,getImage);
+//                            addTheDuotorialToDatabase(getTitle, getImage);
                             startActivity(intent);
 
                         } catch (Exception e) {
@@ -377,11 +424,9 @@ public class MainActivity extends AppCompatActivity
                     }*/
 
 
-
-
                     final DatabaseReference duoRef = FirebaseDatabase.getInstance().getReference().child("users")
                             .child(user.getUid()).child("history");
-                    if (currentValue>=50) {
+                    if (currentValue >= 50) {
                         currentValue %= 50;
                         duoRef.child(currentValue.toString()).setValue(null);
                     }
@@ -392,8 +437,8 @@ public class MainActivity extends AppCompatActivity
                             Integer i = 0;
                             boolean flag = false;
 
-                            while (dataSnapshot.child(i.toString()).hasChildren()){
-                                if (dataSnapshot.child(i.toString()).hasChild(getTitle)){
+                            while (dataSnapshot.child(i.toString()).hasChildren()) {
+                                if (dataSnapshot.child(i.toString()).hasChild(getTitle)) {
                                     duoRef.child(i.toString()).child(getTitle).setValue(getImage);
                                     //duoRef.child(i.toString()).child(getImage).setValue(1);
                                     flag = true;
@@ -402,10 +447,10 @@ public class MainActivity extends AppCompatActivity
                                 i++;
 
                             }
-                            if (!flag){
+                            if (!flag) {
                                 duoRef.child(finalCurrentValue.toString()).child(getTitle).setValue(getImage);
-                               // duoRef.child(finalCurrentValue.toString()).child(getImage).setValue(1);
-                                userDuoAmount.setValue(finalCurrentValue+1);
+                                // duoRef.child(finalCurrentValue.toString()).child(getImage).setValue(1);
+                                userDuoAmount.setValue(finalCurrentValue + 1);
                             }
                         }
 
@@ -414,7 +459,6 @@ public class MainActivity extends AppCompatActivity
 
                         }
                     });
-
 
 
                     return Transaction.success(mutableData);
@@ -429,6 +473,7 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 
@@ -436,13 +481,14 @@ public class MainActivity extends AppCompatActivity
             super(fm);
 
         }
+
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
 
             // comm.response(position);
-            switch (position){
+            switch (position) {
                 case 0:
                     return new BrowseFragment();
                 case 1:
@@ -450,9 +496,11 @@ public class MainActivity extends AppCompatActivity
                 case 2:
                     return new MyDuoFragment();
 
+
             }
             return null;
         }
+
         @Override
         public int getCount() {
             // Show 3 total pages.
@@ -494,7 +542,7 @@ public class MainActivity extends AppCompatActivity
                 /*for/* (FeaturedTitles title : titles) {
                 Toast.makeText(MainActivity.this, titles.toString(), Toast.LENGTH_SHORT).show();
 */
-                //from ver0.2 tab switch
+//from ver0.2 tab switch
                 /*public void toBrowse(View view) {
             tabsFragment.switchToBrowse();
             mViewPager.setCurrentItem(0);

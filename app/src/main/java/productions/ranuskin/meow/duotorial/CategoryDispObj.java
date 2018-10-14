@@ -2,6 +2,7 @@ package productions.ranuskin.meow.duotorial;
 
 /**
  * Created by Ran on 4/7/2018.
+ *  Copyright © 2018 Ran Loock. All rights reserved.
  */
 
 public class CategoryDispObj {

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Ran on 4/7/2018.
+ *  Copyright © 2018 Ran Loock. All rights reserved.
  */
 
 public class CategoriesAdapter extends BaseAdapter {
@@ -43,7 +44,7 @@ public class CategoriesAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup parent) {
         CategoryDispObj item = data.get(i);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View v = inflater.inflate(R.layout.category_display_row,parent,false);
+        View v = inflater.inflate(R.layout.category_display_row, parent, false);
         ImageView ivIcon = v.findViewById(R.id.ivIcon);
         TextView tvTitle = v.findViewById(R.id.tvRowTitle);
 

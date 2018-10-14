@@ -11,12 +11,13 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 /**
- * Created by Ran on 4/23/2018.
+ * Created by Ran Loock on 4/23/2018.
+ *  Copyright © 2018 Ran Loock. All rights reserved.
  */
 
 public class AddToDuotorialDatabase {
-    public static void addData(final String title, final String imageURL){
-            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    public static void addData(final String title, final String imageURL) {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference userDuoAmount = FirebaseDatabase.getInstance().getReference().child("users")
                 .child(user.getUid()).child("duotorialAmount");
         userDuoAmount.runTransaction(new Transaction.Handler() {
@@ -31,23 +32,30 @@ public class AddToDuotorialDatabase {
                     }*/
 
 
-
-
                 final DatabaseReference duoRef = FirebaseDatabase.getInstance().getReference().child("users")
                         .child(user.getUid()).child("history");
-                if (currentValue>=50) {
-                    currentValue %= 50;
-                    duoRef.child(currentValue.toString()).setValue(null);
-                }
-                final Integer finalCurrentValue = currentValue;
+                boolean flag = false;
+//                while ( currentValue >= 2){
+//                    currentValue %= 2;
+//                    flag = true;
+//                }
+//                if (flag == true) {
+//                    duoRef.child(currentValue.toString()).removeValue();
+//                }
+                final Integer finalCurrentValue = mutableData.getValue(Integer.class);
                 duoRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (finalCurrentValue == 0 ){
+                            duoRef.child(0+"").child(title).setValue(imageURL);
+                            userDuoAmount.setValue(1);
+                            return;
+                        }
                         Integer i = 0;
                         boolean flag = false;
 
-                        while (dataSnapshot.child(i.toString()).hasChildren()){
-                            if (dataSnapshot.child(i.toString()).hasChild(title)){
+                        while (dataSnapshot.child(i.toString()).hasChildren()) {
+                            if (dataSnapshot.child(i.toString()).hasChild(title)) {
                                 duoRef.child(i.toString()).child(title).setValue(imageURL);
                                 //duoRef.child(i.toString()).child(getImage).setValue(1);
                                 flag = true;
@@ -56,10 +64,11 @@ public class AddToDuotorialDatabase {
                             i++;
 
                         }
-                        if (!flag){
-                            duoRef.child(finalCurrentValue.toString()).child(title).setValue(imageURL);
+                        if (!flag) {
+                            Integer addto = finalCurrentValue;
+                            duoRef.child(addto.toString()).child(title).setValue(imageURL);
                             // duoRef.child(finalCurrentValue.toString()).child(getImage).setValue(1);
-                            userDuoAmount.setValue(finalCurrentValue+1);
+                            userDuoAmount.setValue(addto+1);
                         }
                     }
 
@@ -68,7 +77,6 @@ public class AddToDuotorialDatabase {
 
                     }
                 });
-
 
 
                 return Transaction.success(mutableData);

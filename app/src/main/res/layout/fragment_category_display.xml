@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
+        app:backgroundTint="#ffffff"
         android:clickable="true"
-        android:src="@drawable/ic_back" />
+        android:src="@drawable/ic_close" />
 </FrameLayout>

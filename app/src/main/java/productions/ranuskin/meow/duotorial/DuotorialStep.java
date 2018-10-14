@@ -1,7 +1,8 @@
 package productions.ranuskin.meow.duotorial;
 
 /**
- * Created by Ran on 4/2/2018.
+ * Created by Ran Loock on 4/2/2018.
+ *  Copyright © 2018 Ran Loock. All rights reserved.
  */
 
 public class DuotorialStep {

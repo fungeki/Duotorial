@@ -1,6 +1,7 @@
 package productions.ranuskin.meow.duotorial;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,14 +9,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 /**
- * Created by Ran on 4/6/2018.
+ * Created by Ran Loock on 4/6/2018.
+ *  Copyright © 2018 Ran Loock. All rights reserved.
  */
 
 public class DialogAdapter extends BaseAdapter {
@@ -48,14 +49,23 @@ public class DialogAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         DuotorialDialogPreview item = data.get(position);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View v = inflater.inflate(R.layout.steps_dialog_row,parent,false);
+        View v = inflater.inflate(R.layout.steps_dialog_row, parent, false);
         ImageView ivImage = v.findViewById(R.id.ivStepImage);
         TextView tvBold = v.findViewById(R.id.tvHeadline);
-        if (currentStep==position){
+        if (currentStep == position) {
             v.setBackgroundColor(context.getResources().getColor(R.color.brightGreen));
         }
+        if (item.getImageURL().contains(".gif")){
+            Uri uri = Uri.parse(item.getImageURL());
+            Glide
+                    .with(context)
+                    .load(uri)
+                    .into(ivImage);
+        }else {
+            Picasso.with(context).load(item.getImageURL()).into(ivImage);
+        }
 
-        Picasso.with(context).load(item.getImageURL()).into(ivImage);
+
         tvBold.setText(item.getBoldPreview());
 
         return v;

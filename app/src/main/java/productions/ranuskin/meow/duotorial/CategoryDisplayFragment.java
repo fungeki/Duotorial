@@ -13,7 +13,8 @@ import android.widget.ProgressBar;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Created by Ran Loock on 4/23/2018.
+ *  Copyright © 2018 Ran Loock. All rights reserved.
  */
 public class CategoryDisplayFragment extends Fragment {
 
@@ -21,6 +22,7 @@ public class CategoryDisplayFragment extends Fragment {
     private ListView lvCategoryDisplayList;
     private FloatingActionButton fabRestart;
     private ProgressBar pbCategoryLoad;
+
     public CategoryDisplayFragment() {
         // Required empty public constructor
     }
@@ -28,7 +30,7 @@ public class CategoryDisplayFragment extends Fragment {
     public static CategoryDisplayFragment newInstance(String title) {
 
         Bundle args = new Bundle();
-        args.putString("Category_Name",title);
+        args.putString("Category_Name", title);
         CategoryDisplayFragment fragment = new CategoryDisplayFragment();
         fragment.setArguments(args);
         return fragment;
@@ -49,7 +51,7 @@ public class CategoryDisplayFragment extends Fragment {
         lvCategoryDisplayList = view.findViewById(R.id.lvCategoryDisplayList);
         String title = bundle.getString("Category_Name");
 
-        fabRestart=view.findViewById(R.id.fabRestart);
+        fabRestart = view.findViewById(R.id.fabRestart);
         fabRestart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +60,7 @@ public class CategoryDisplayFragment extends Fragment {
 
             }
         });
-        CategoriesDisplayTask task = new CategoriesDisplayTask(getContext(),lvCategoryDisplayList,pbCategoryLoad);
+        CategoriesDisplayTask task = new CategoriesDisplayTask(getContext(), lvCategoryDisplayList, pbCategoryLoad);
         task.execute(title);
     }
 }

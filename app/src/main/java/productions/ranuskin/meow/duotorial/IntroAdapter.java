@@ -42,14 +42,12 @@ public class IntroAdapter extends BaseAdapter {
     }
 
     public View getView(int i, View view, ViewGroup parent) {
-        DuoIntro item = data.get(i);
+        final DuoIntro item = data.get(i);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View v = inflater.inflate(R.layout.intro_list_row,parent,false);
+        View v = inflater.inflate(R.layout.intro_list_row, parent, false);
         ImageView ivIcon = v.findViewById(R.id.ivIcon);
         TextView tvTitle = v.findViewById(R.id.tvRowTitle);
         TextView tvIntro = v.findViewById(R.id.tvIntro);
-
-
         tvTitle.setText(item.getTitle());
         Picasso.with(context).load(item.getImageURL()).into(ivIcon);
         tvIntro.setText(item.getIntro());
@@ -57,3 +55,24 @@ public class IntroAdapter extends BaseAdapter {
         return v;
     }
 }
+//
+////        View.OnClickListener listener = new View.OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+////                String getTitle = item.getTitle();
+////                String getDescription = item.getIntro();
+////                getDescription = Jsoup.parse(getDescription).text();
+////                String getImage = item.getImageURL();
+////                final Intent intent = new Intent(context, DuotorialActivity.class);
+////                intent.putExtra("TITLE", getTitle);
+////                intent.putExtra("DESCRIPTION", getDescription);
+////                intent.putExtra("IMAGE", getImage);
+////                AddToDuotorialDatabase.addData(getTitle,getImage);
+////                context.startActivity(intent);
+////
+////
+////            }
+////        };
+//        tvIntro.setOnClickListener(listener);
+//        tvTitle.setOnClickListener(listener);
+//        ivIcon.setOnClickListener(listener);

@@ -7,12 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 /**
- * A simple {@link Fragment} subclass.
+ * Created by Ran Loock on 5/21/2018.
+ *  Copyright © 2018 Ran Loock. All rights reserved.
  */
 public class ClassroomFragment extends Fragment {
-
 
     public ClassroomFragment() {
         // Required empty public constructor
@@ -25,5 +24,6 @@ public class ClassroomFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_classroom, container, false);
     }
+
 
 }

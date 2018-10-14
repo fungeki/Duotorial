@@ -9,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-
 /**
- * A simple {@link Fragment} subclass.
+ * Created by Ran Loock on 5/21/2018.
+ *  Copyright © 2018 Ran Loock. All rights reserved.
  */
 public class FeaturedFragment extends Fragment {
 
@@ -32,7 +32,7 @@ public class FeaturedFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        lvFeatured=view.findViewById(R.id.lvFeatured);
+        lvFeatured = view.findViewById(R.id.lvFeatured);
 
 
     }
